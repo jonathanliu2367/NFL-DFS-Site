@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Genius Sports NFL DFS — NYG @ LAR</title>
+<style>
+  body{margin:0;font-family:system-ui,sans-serif;background:#0f1420;color:#eef2f8}
+  header{padding:1.2rem 1.4rem;background:linear-gradient(90deg,#0b226555,#00359455);border-bottom:1px solid #2a3548}
+  h1{margin:0;font-size:1.25rem} .sub{color:#9aabc4;font-size:.88rem;margin-top:.3rem}
+  .wrap{max-width:1040px;margin:0 auto;padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 300px;gap:1rem;align-items:start}
+  @media(max-width:800px){.wrap{grid-template-columns:1fr}}
+  label{display:block;font-size:.8rem;color:#9aabc4;margin-bottom:.3rem}
+  input[type=text], input[type=email]{width:100%;padding:.65rem .8rem;border-radius:8px;border:1px solid #2a3548;background:#0a0e18;color:#fff;font-size:1rem;box-sizing:border-box;outline:none;-webkit-appearance:none;appearance:none}
+  input[type=text]:focus, input[type=email]:focus{border-color:#1493ff}
+  .modes{display:flex;gap:.5rem;margin:1rem 0 .75rem}
+  .modes button{flex:1;padding:.65rem;border-radius:8px;border:1px solid #2a3548;background:#151c2c;color:#eef2f8;cursor:pointer;font-weight:600;font-size:.85rem}
+  .modes button.on{background:#1493ff;border-color:#1493ff;color:#fff}
+  .banner{background:#1493ff22;border:1px solid #1493ff66;color:#b8d9ff;padding:.65rem .85rem;border-radius:8px;font-size:.82rem;margin-bottom:.75rem}
+  .bad{color:#ff6b6b}.ok{color:#3ecf8e}
+  table{width:100%;border-collapse:collapse;background:#151c2c;border-radius:10px;overflow:hidden;border:1px solid #2a3548}
+  th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid #2a3548;font-size:.9rem}
+  th{color:#9aabc4;font-size:.72rem;font-weight:500}
+  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  th.sortable:hover{color:#eef2f8}
+  th.sortable.active{color:#d4b56a}
+  .filters{display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;align-items:center}
+  .filters select,.filters input[type=search]{padding:.45rem .6rem;border-radius:6px;border:1px solid #2a3548;background:#0a0e18;color:#eef2f8;font-size:.85rem}
+  .filters input[type=search]{flex:1;min-width:160px;outline:none;-webkit-appearance:none;appearance:none}
+  .filters input[type=search]:focus{border-color:#1493ff}
+  .filters input[type=search]::placeholder{color:#5a6a82}
+  tr{cursor:pointer} tr:hover{background:#1c2538} tr.on{background:#1e3a2f}
+  tr.locked{opacity:.45;cursor:not-allowed} tr.locked:hover{background:transparent}
+  .note{color:#9aabc4;font-size:.72rem;margin-left:.35rem;font-style:italic}
+  .team{font-size:.68rem;font-weight:700;padding:.12rem .35rem;border-radius:3px;margin-right:.35rem}
+  .NYG{background:#0b2265}.LAR{background:#003594}
+  .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#0a0e18;border:1px solid #2a3548;flex-shrink:0;vertical-align:middle}
+  .avatar.sm{width:28px;height:28px}
+  .pname{display:flex;align-items:center;gap:.55rem}
+  .pname .meta{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+  .pname .nm{font-weight:600;line-height:1.2}
+  .slot .pname{gap:.45rem}
+  .sal{color:#d4b56a;font-variant-numeric:tabular-nums}
+  .proj{color:#9ec5ff;font-variant-numeric:tabular-nums;font-size:.9rem}
+  .act{width:44px;text-align:center}
+  .pm{width:30px;height:30px;border-radius:50%;border:0;cursor:pointer;font-size:1.2rem;line-height:1;font-weight:700}
+  .pm.add{background:#1db954;color:#fff}
+  .pm.add:disabled{opacity:.35;cursor:not-allowed}
+  .pm.sub{background:#e74c3c;color:#fff}
+  button#go{width:100%;padding:.85rem;border:0;border-radius:8px;background:#d4b56a;color:#111;font-weight:700;font-size:1rem;cursor:pointer}
+  button#go:disabled{opacity:.4;cursor:not-allowed}
+  #msg{margin-top:.8rem;font-size:.9rem;min-height:1.2em}
+  .side{position:sticky;top:1rem;background:#151c2c;border:1px solid #2a3548;border-radius:10px;overflow:hidden}
+  .side h2{margin:0;padding:.75rem 1rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:#9aabc4;border-bottom:1px solid #2a3548}
+  .side-sal{padding:.85rem 1rem;border-bottom:1px solid #2a3548}
+  .side-sal .lbl{font-size:.72rem;color:#9aabc4;text-transform:uppercase;letter-spacing:.04em}
+  .side-sal .big{font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:.2rem}
+  .side-sal .used{font-size:.8rem;color:#9aabc4;margin-top:.15rem}
+  .slot{padding:.7rem 1rem;border-bottom:1px solid #2a3548;min-height:52px;cursor:pointer;border-left:3px solid transparent}
+  .slot:hover{background:#1c2538}
+  .slot.active{background:#1a2a44;border-left-color:#1493ff}
+  .slot .lbl{font-size:.68rem;color:#9aabc4;font-weight:600;margin-bottom:.2rem}
+  .slot .empty{color:#5a6a82;font-size:.85rem}
+  .slot .who{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.9rem}
+  .slot .psal{color:#d4b56a;font-size:.8rem;white-space:nowrap}
+  .slot .pproj{color:#9ec5ff;font-size:.75rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .slot .pright{display:flex;flex-direction:column;align-items:flex-end;gap:.1rem;line-height:1.15}
+  .confirm .pproj{color:#9ec5ff;font-size:.85rem;font-variant-numeric:tabular-nums;margin-right:.55rem}
+  .confirm .rightmeta{display:flex;align-items:center;gap:.15rem;flex-shrink:0}
+  .side-foot{padding:1rem}
+  .rules{max-width:1040px;margin:0 auto;padding:.9rem 1.2rem;font-size:.88rem;color:#c5d0e0;line-height:1.45;border-bottom:1px solid #2a3548;background:#121926}
+  .rules strong{color:#eef2f8}
+  .field{margin-bottom:.75rem}
+  .confirm{display:none;max-width:640px;margin:1.5rem auto;padding:1.25rem;background:#151c2c;border:1px solid #2a3548;border-radius:10px}
+  .confirm.show{display:block}
+  .confirm h2{margin:0 0 .5rem;color:#3ecf8e}
+  .confirm .row{padding:.55rem 0;border-bottom:1px solid #2a3548;font-size:.92rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+  .confirm .row .who{display:flex;align-items:center;gap:.55rem;min-width:0}
+  .confirm .row .slotlbl{font-size:.68rem;color:#9aabc4;font-weight:600;text-transform:uppercase;letter-spacing:.04em;min-width:2.6rem}
+  .confirm .row .nm{font-weight:600}
+  .lookup{max-width:1040px;margin:0 auto;padding:1rem 1.2rem;border-bottom:1px solid #2a3548;background:#151c2c}
+  .lookup-box{display:flex;gap:.5rem;flex-wrap:wrap;align-items:end;max-width:520px}
+  .lookup-box .field{flex:1;min-width:200px;margin:0}
+  .lookup-box button{padding:.65rem 1rem;border:0;border-radius:8px;background:#1493ff;color:#fff;font-weight:600;cursor:pointer}
+  #build-wrap.hidden{display:none}
+  .scoring{max-width:1040px;margin:0 auto;padding:1.5rem 1.2rem 2.5rem;border-top:1px solid #2a3548;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif}
+  .scoring h2{margin:0 0 .35rem;font-size:1.1rem;font-weight:700;color:#eef2f8}
+  .scoring .lede{color:#9aabc4;font-size:.9rem;margin:0 0 1.1rem;line-height:1.45}
+  .scoring-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+  .scoring .card{background:#151c2c;border:1px solid #2a3548;border-radius:10px;overflow:visible}
+  .scoring .card h3{margin:0;padding:.7rem .9rem;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9aabc4;border-bottom:1px solid #2a3548}
+  .scoring table{width:100%;border-collapse:collapse;font-size:.9rem;table-layout:fixed}
+  .scoring td{padding:.5rem .9rem;border-bottom:1px solid #2a3548;vertical-align:middle;color:#eef2f8;line-height:1.35}
+  .scoring td:first-child{width:68%}
+  .scoring tr:last-child td{border-bottom:0}
+  .scoring td.pts{width:32%;text-align:right;color:#d4b56a;font-weight:600;font-variant-numeric:tabular-nums;white-space:normal;word-break:break-word}
+  .scoring .note{margin-top:1rem;font-size:.85rem;color:#9aabc4;line-height:1.4}
+</style>
+</head>
+<body>
+<header>
+  <h1>Genius Sports NFL DFS — Giants @ Rams</h1>
+</header>
+<div class="rules">
+  <strong>Rules:</strong> Full PPR Sleeper scoring · $60,000 salary cap · MVP costs/scores 1.5× · One entry per person (edit anytime until lock) · Entries <strong>lock at 8:15pm ET Monday</strong>
+</div>
+
+<div class="lookup">
+  <h2 style="margin:0 0 .35rem;font-size:1rem">Look up my lineup</h2>
+  <p style="margin:0 0 .75rem;color:#9aabc4;font-size:.85rem">Already submitted? Look it up anytime — you can edit until 8:15pm ET Monday.</p>
+  <div class="lookup-box">
+    <div class="field">
+      <label for="lookup-email">Email</label>
+      <input id="lookup-email" type="email" placeholder="you@email.com"/>
+    </div>
+    <button type="button" id="lookup-btn">Find lineup</button>
+  </div>
+  <div id="lookup-result" style="margin-top:1rem"></div>
+</div>
+
+<div id="confirm" class="confirm">
+  <h2>You're in!</h2>
+  <p id="confirm-sub" class="sub" style="margin:0 0 1rem"></p>
+  <div id="confirm-body"></div>
+  <p style="margin:1rem 0 0;font-size:.85rem;color:#9aabc4">You can look up this lineup anytime above with your email.</p>
+  <button type="button" id="build-another" style="margin-top:1rem;padding:.65rem 1rem;border:0;border-radius:8px;background:#2a3548;color:#fff;cursor:pointer">Back to builder</button>
+</div>
+
+<div class="wrap" id="build-wrap">
+  <div>
+    <div class="field">
+      <label for="name">Your name</label>
+      <input id="name" type="text" placeholder="Enter name" autocomplete="name"/>
+    </div>
+    <div class="field">
+      <label for="email">Email (to look up / receive your lineup)</label>
+      <input id="email" type="email" placeholder="you@email.com" autocomplete="email"/>
+    </div>
+    <div class="modes">
+      <button type="button" id="mode-mvp" class="on">MVP — 1.5× Points</button>
+      <button type="button" id="mode-flex">AnyFLEX</button>
+    </div>
+    <div class="banner" id="banner">Click a lineup slot, then click a player to fill it.</div>
+    <div class="filters">
+      <input id="filter-search" type="search" placeholder="Search player…" autocomplete="off" spellcheck="false"/>
+      <select id="filter-team"><option value="">All teams</option><option value="NYG">NYG</option><option value="LAR">LAR</option></select>
+      <select id="filter-pos"><option value="">All positions</option></select>
+      <select id="sort-by">
+        <option value="salary:-1">Salary (high → low)</option>
+        <option value="salary:1">Salary (low → high)</option>
+        <option value="proj:-1">Proj (high → low)</option>
+        <option value="proj:1">Proj (low → high)</option>
+        <option value="name:1">Name (A → Z)</option>
+        <option value="name:-1">Name (Z → A)</option>
+        <option value="team:1">Team</option>
+        <option value="pos:1">Position</option>
+      </select>
+    </div>
+    <table>
+      <thead><tr>
+        <th class="sortable" data-sort="name">Player</th>
+        <th class="sortable" data-sort="team">Team</th>
+        <th class="sortable" data-sort="pos">Pos</th>
+        <th class="sortable" data-sort="proj">Proj</th>
+        <th class="sortable active" data-sort="salary">Salary ▾</th>
+        <th></th>
+      </tr></thead>
+      <tbody id="pool"></tbody>
+    </table>
+    <div id="msg"></div>
+  </div>
+
+  <aside class="side">
+    <h2>Your lineup</h2>
+    <div class="side-sal">
+      <div class="lbl">Salary remaining</div>
+      <div class="big ok" id="remain">$60,000</div>
+      <div class="used" id="used">$0 used · avg $10,000 / player</div>
+    </div>
+    <div id="lineup-slots"></div>
+    <div class="side-foot">
+      <button id="go" disabled>Submit lineup</button>
+    </div>
+  </aside>
+</div>
+
+<section class="scoring">
+  <h2>Scoring</h2>
+  <p class="lede">Scoring will be based on <strong style="color:#eef2f8">default Sleeper PPR</strong>. MVP scores <strong style="color:#eef2f8">1.5x</strong> these points.</p>
+  <div class="scoring-grid">
+    <div class="card">
+      <h3>Passing</h3>
+      <table>
+        <tr><td>Passing yard</td><td class="pts">0.04</td></tr>
+        <tr><td>Passing touchdown</td><td class="pts">4</td></tr>
+        <tr><td>Interception thrown</td><td class="pts">-1</td></tr>
+        <tr><td>Passing 2-pt conversion</td><td class="pts">2</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Rushing</h3>
+      <table>
+        <tr><td>Rushing yard</td><td class="pts">0.1</td></tr>
+        <tr><td>Rushing touchdown</td><td class="pts">6</td></tr>
+        <tr><td>Rushing 2-pt conversion</td><td class="pts">2</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Receiving</h3>
+      <table>
+        <tr><td>Reception</td><td class="pts">1</td></tr>
+        <tr><td>Receiving yard</td><td class="pts">0.1</td></tr>
+        <tr><td>Receiving touchdown</td><td class="pts">6</td></tr>
+        <tr><td>Receiving 2-pt conversion</td><td class="pts">2</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Kicking</h3>
+      <table>
+        <tr><td>FG made (0-39 yards)</td><td class="pts">3</td></tr>
+        <tr><td>FG made (40-49 yards)</td><td class="pts">4</td></tr>
+        <tr><td>FG made (50+ yards)</td><td class="pts">5</td></tr>
+        <tr><td>Extra point made</td><td class="pts">1</td></tr>
+        <tr><td>Field goal missed</td><td class="pts">-1</td></tr>
+        <tr><td>Extra point missed</td><td class="pts">-1</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Defense / special teams</h3>
+      <table>
+        <tr><td>Defensive touchdown</td><td class="pts">6</td></tr>
+        <tr><td>Sack</td><td class="pts">1</td></tr>
+        <tr><td>Interception</td><td class="pts">2</td></tr>
+        <tr><td>Fumble recovery</td><td class="pts">2</td></tr>
+        <tr><td>Forced fumble</td><td class="pts">1</td></tr>
+        <tr><td>Safety</td><td class="pts">2</td></tr>
+        <tr><td>Blocked kick</td><td class="pts">2</td></tr>
+        <tr><td>Special-teams touchdown</td><td class="pts">6</td></tr>
+        <tr><td>ST forced fumble</td><td class="pts">1</td></tr>
+        <tr><td>ST fumble recovery</td><td class="pts">1</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>D/ST points allowed</h3>
+      <table>
+        <tr><td>0 points allowed</td><td class="pts">10</td></tr>
+        <tr><td>1-6 points allowed</td><td class="pts">7</td></tr>
+        <tr><td>7-13 points allowed</td><td class="pts">4</td></tr>
+        <tr><td>14-20 points allowed</td><td class="pts">1</td></tr>
+        <tr><td>21-27 points allowed</td><td class="pts">0</td></tr>
+        <tr><td>28-34 points allowed</td><td class="pts">-1</td></tr>
+        <tr><td>35+ points allowed</td><td class="pts">-4</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Fumbles &amp; individual ST</h3>
+      <table>
+        <tr><td>Special-teams touchdown</td><td class="pts">6</td></tr>
+        <tr><td>Fumble</td><td class="pts">0</td></tr>
+        <tr><td>Fumble lost</td><td class="pts">-2</td></tr>
+        <tr><td>Fumble-recovery touchdown</td><td class="pts">6</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+let players=[], mvp=null, flex=[null,null,null,null,null], CAP=60000, FLEX_N=5;
+let activeSlot='mvp'; // 'mvp' or 0..4
+let sortKey='salary', sortDir=-1, filterTeam='', filterPos='', filterSearch='';
+let locked=false, lockAt=null, editingExisting=false;
+const POS_ORDER = {QB:1,RB:2,WR:3,TE:4,K:5,DST:6};
+const $ = s => document.querySelector(s);
+const money = n => '$' + Math.round(n).toLocaleString();
+const byId = id => players.find(p => p.id === id);
+const displayName = p => (p.pos === 'DST' && !/DST$/i.test(p.name)) ? `${p.name} DST` : p.name;
+const avatar = (p, cls='') => `<img class="avatar ${cls}" src="${p.img || ''}" alt="" loading="lazy" onerror="this.src='https://sleepercdn.com/images/v2/icons/player_default.webp'"/>`;
+const isMvpMode = () => activeSlot === 'mvp';
+
+function visiblePlayers() {
+  const q = filterSearch.trim().toLowerCase();
+  let list = players.filter(p =>
+    (!filterTeam || p.team === filterTeam) &&
+    (!filterPos || p.pos === filterPos) &&
+    (!q || displayName(p).toLowerCase().includes(q) || p.team.toLowerCase().includes(q) || p.pos.toLowerCase().includes(q))
+  );
+  list = [...list].sort((a, b) => {
+    let av, bv;
+    if (sortKey === 'salary') {
+      av = isMvpMode() ? a.mvp_salary : a.salary;
+      bv = isMvpMode() ? b.mvp_salary : b.salary;
+    } else if (sortKey === 'proj') {
+      const ap = a.proj == null ? -1 : Number(a.proj);
+      const bp = b.proj == null ? -1 : Number(b.proj);
+      av = isMvpMode() ? ap * 1.5 : ap;
+      bv = isMvpMode() ? bp * 1.5 : bp;
+    } else if (sortKey === 'pos') {
+      av = POS_ORDER[a.pos] || 99; bv = POS_ORDER[b.pos] || 99;
+      if (av === bv) { av = a.name; bv = b.name; return av < bv ? -sortDir : av > bv ? sortDir : 0; }
+    } else if (sortKey === 'team') {
+      av = a.team; bv = b.team;
+      if (av === bv) { av = a.salary; bv = b.salary; return (bv - av) * (sortDir < 0 ? 1 : -1); }
+    } else {
+      av = a.name.toLowerCase(); bv = b.name.toLowerCase();
+    }
+    if (av < bv) return -sortDir;
+    if (av > bv) return sortDir;
+    return 0;
+  });
+  return list;
+}
+
+function updateSortHeaders() {
+  document.querySelectorAll('th.sortable').forEach(th => {
+    const key = th.dataset.sort;
+    const on = key === sortKey;
+    th.classList.toggle('active', on);
+    const label = {name:'Player', team:'Team', pos:'Pos', proj:'Proj', salary:'Salary'}[key];
+    th.textContent = on ? `${label} ${sortDir < 0 ? '▾' : '▴'}` : label;
+  });
+}
+
+function formatProj(p) {
+  if (p.proj == null || p.proj === '') return '—';
+  const base = Number(p.proj);
+  if (!Number.isFinite(base)) return '—';
+  const pts = isMvpMode() ? base * 1.5 : base;
+  return pts.toFixed(1);
+}
+
+function slotProjPts(p, asMvp) {
+  if (!p || p.proj == null || p.proj === '') return null;
+  const base = Number(p.proj);
+  if (!Number.isFinite(base)) return null;
+  return asMvp ? base * 1.5 : base;
+}
+
+function formatProjPts(n) {
+  if (n == null || !Number.isFinite(n)) return '—';
+  return n.toFixed(1);
+}
+
+function lineupProjTotal() {
+  let total = 0;
+  let any = false;
+  if (mvp) {
+    const n = slotProjPts(byId(mvp), true);
+    if (n != null) { total += n; any = true; }
+  }
+  flex.forEach(id => {
+    if (!id) return;
+    const n = slotProjPts(byId(id), false);
+    if (n != null) { total += n; any = true; }
+  });
+  return any ? total : null;
+}
+
+function entryPlayerProj(p) {
+  // Prefer live pool (fresh Sleeper poll); fall back to enriched API value
+  const pl = detailPlayer(p);
+  if (pl && pl.proj != null && pl.proj !== '') {
+    const base = Number(pl.proj);
+    if (Number.isFinite(base)) return p.slot === 'MVP' ? base * 1.5 : base;
+  }
+  if (p.proj != null && p.proj !== '') {
+    const n = Number(p.proj);
+    if (Number.isFinite(n)) return n;
+  }
+  return null;
+}
+
+function salaryUsed() {
+  let s = 0;
+  if (mvp) s += byId(mvp).mvp_salary;
+  flex.forEach(id => { if (id) s += byId(id).salary; });
+  return s;
+}
+
+function firstEmptyFlex() {
+  return flex.findIndex(x => !x);
+}
+
+function updateSlotChrome() {
+  const mvpMode = activeSlot === 'mvp';
+  $('#mode-mvp').classList.toggle('on', mvpMode);
+  $('#mode-flex').classList.toggle('on', !mvpMode);
+  $('#banner').textContent = mvpMode
+    ? 'MVP slot selected — click a player to set MVP (1.5× salary & points).'
+    : `AnyFLEX slot ${activeSlot + 1} selected — click a player to fill it.`;
+}
+
+function focusNeededSlot() {
+  const flexEmpty = firstEmptyFlex();
+  const lineupComplete = !!mvp && flexEmpty < 0;
+
+  if (lineupComplete) {
+    updateSlotChrome();
+    return; // stay on current tab
+  }
+  if (!mvp && flexEmpty < 0) {
+    activeSlot = 'mvp'; // all flexes full, MVP empty
+  } else if (mvp && flexEmpty >= 0) {
+    activeSlot = flexEmpty; // MVP done, flexes remain
+  } else if (activeSlot !== 'mvp' && flexEmpty >= 0) {
+    activeSlot = flexEmpty; // still building flexes
+  }
+  // if MVP empty and flexes empty/partial and on MVP tab, stay on MVP
+  updateSlotChrome();
+}
+
+function selectSlot(slot) {
+  activeSlot = slot;
+  updateSlotChrome();
+  sync();
+}
+
+function clearFromLineup(id) {
+  if (mvp === id) mvp = null;
+  flex = flex.map(x => x === id ? null : x);
+}
+
+function removePlayer(id) {
+  if (!id) return;
+  clearFromLineup(id);
+  focusNeededSlot();
+  sync();
+}
+
+function addPlayer(id) {
+  if (!id) return;
+  clearFromLineup(id);
+  if (activeSlot === 'mvp') {
+    mvp = id;
+  } else {
+    const i = firstEmptyFlex();
+    if (i < 0) return;
+    flex[i] = id;
+  }
+  focusNeededSlot();
+  sync();
+}
+
+function sync() {
+  const used = salaryUsed();
+  const rem = CAP - used;
+  const ids = [mvp, ...flex].filter(Boolean);
+  const name = $('#name').value.trim();
+  const email = $('#email').value.trim();
+  const full = mvp && flex.every(Boolean);
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  $('#remain').textContent = money(rem);
+  $('#remain').className = 'big ' + (rem < 0 ? 'bad' : 'ok');
+  const avg = Math.round(CAP / (1 + FLEX_N));
+  const projTot = lineupProjTotal();
+  $('#used').textContent = projTot != null
+    ? `${money(used)} used · avg ${money(avg)} / player · proj ${formatProjPts(projTot)}`
+    : `${money(used)} used · avg ${money(avg)} / player`;
+
+  const slots = [];
+  const mvpActive = activeSlot === 'mvp' ? ' active' : '';
+  if (!mvp) {
+    slots.push(`<div class="slot${mvpActive}" data-slot="mvp"><div class="lbl">MVP — 1.5×</div><div class="empty">Select MVP</div></div>`);
+  } else {
+    const p = byId(mvp);
+    slots.push(`<div class="slot filled${mvpActive}" data-slot="mvp"><div class="lbl">MVP — 1.5×</div><div class="who">
+      <span class="pname">${avatar(p,'sm')}<span><span class="team ${p.team}">${p.team}</span>${displayName(p)}</span></span>
+      <span style="display:flex;align-items:center;gap:.45rem">
+        <span class="pright"><span class="pproj">${formatProjPts(slotProjPts(p, true))}</span><span class="psal">${money(p.mvp_salary)}</span></span>
+        <button class="pm sub" data-rm="${mvp}" type="button">−</button>
+      </span></div></div>`);
+  }
+  flex.forEach((id, i) => {
+    const act = activeSlot === i ? ' active' : '';
+    if (!id) {
+      slots.push(`<div class="slot${act}" data-slot="${i}"><div class="lbl">AnyFLEX</div><div class="empty">Select AnyFLEX</div></div>`);
+      return;
+    }
+    const p = byId(id);
+    slots.push(`<div class="slot filled${act}" data-slot="${i}"><div class="lbl">AnyFLEX</div><div class="who">
+      <span class="pname">${avatar(p,'sm')}<span><span class="team ${p.team}">${p.team}</span>${displayName(p)}</span></span>
+      <span style="display:flex;align-items:center;gap:.45rem">
+        <span class="pright"><span class="pproj">${formatProjPts(slotProjPts(p, false))}</span><span class="psal">${money(p.salary)}</span></span>
+        <button class="pm sub" data-rm="${id}" type="button">−</button>
+      </span></div></div>`);
+  });
+  $('#lineup-slots').innerHTML = slots.join('');
+  document.querySelectorAll('[data-slot]').forEach(el => {
+    el.onclick = () => {
+      const s = el.dataset.slot;
+      selectSlot(s === 'mvp' ? 'mvp' : Number(s));
+    };
+  });
+  document.querySelectorAll('#lineup-slots [data-rm]').forEach(el => {
+    el.onclick = e => { e.stopPropagation(); removePlayer(el.dataset.rm); };
+  });
+
+  const ok = !locked && name && emailOk && full && rem >= 0;
+  $('#go').disabled = !ok;
+  let why = '';
+  if (locked) why = 'Entries locked — kickoff was 8:15pm ET';
+  else if (!ok) {
+    if (!name) why = 'Enter your name';
+    else if (!emailOk) why = 'Enter a valid email';
+    else if (!mvp) why = 'Select an MVP';
+    else if (!flex.every(Boolean)) why = `Need ${flex.filter(x => !x).length} more AnyFLEX player${flex.filter(x => !x).length === 1 ? '' : 's'}`;
+    else if (rem < 0) why = `Over salary cap by ${money(-rem)}`;
+  }
+  let whyEl = $('#why');
+  if (!whyEl) {
+    whyEl = document.createElement('div');
+    whyEl.id = 'why';
+    whyEl.style.cssText = 'color:#ff6b6b;font-size:.85rem;margin-top:.55rem;min-height:1.2em';
+    $('#go').after(whyEl);
+  }
+  whyEl.textContent = why;
+  renderPool();
+}
+
+function renderPool() {
+  updateSortHeaders();
+  const mvpMode = isMvpMode();
+  $('#pool').innerHTML = visiblePlayers().map(p => {
+    const isMvp = mvp === p.id;
+    const isFlex = flex.includes(p.id);
+    const inActive = mvpMode ? isMvp : isFlex;
+    const locked = mvpMode ? isFlex : isMvp;
+    const showSal = mvpMode ? p.mvp_salary : p.salary;
+    let btn = '';
+    let note = '';
+    if (locked) {
+      note = mvpMode ? 'already selected as FLEX' : 'already selected as MVP';
+      btn = `<button class="pm sub" type="button" data-rm-other="${p.id}" title="Remove from lineup">−</button>`;
+    } else if (inActive) {
+      btn = `<button class="pm sub" type="button" data-toggle="${p.id}">−</button>`;
+    } else {
+      btn = `<button class="pm add" type="button" data-toggle="${p.id}">+</button>`;
+    }
+    const cls = locked ? 'locked' : (inActive ? 'on' : '');
+    return `<tr class="${cls}" data-id="${p.id}" data-locked="${locked ? '1' : '0'}">
+      <td><div class="pname">${avatar(p)}<span class="meta"><span class="nm">${displayName(p)}${p.inj ? ` <span style="color:#ff6b6b;font-size:.75rem" title="${(p.inj_detail || p.inj).replace(/"/g, '&quot;')}">${p.inj}</span>` : ''}</span>${note ? `<span class="note">${note}</span>` : ''}</span></div></td>
+      <td><span class="team ${p.team}">${p.team}</span></td>
+      <td>${p.pos}</td>
+      <td class="proj" title="Sleeper full PPR projection${mvpMode ? ' × 1.5 for MVP' : ''}">${formatProj(p)}</td>
+      <td class="sal">${money(showSal)}</td>
+      <td class="act">${btn}</td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('#pool .pm.sub').forEach(b => {
+    b.onclick = e => {
+      e.stopPropagation();
+      removePlayer(b.dataset.toggle || b.dataset.rmOther);
+    };
+  });
+  document.querySelectorAll('#pool .pm.add').forEach(b => {
+    b.onclick = e => {
+      e.stopPropagation();
+      addPlayer(b.dataset.toggle);
+    };
+  });
+  document.querySelectorAll('#pool tr').forEach(tr => {
+    tr.onclick = () => {
+      if (tr.dataset.locked === '1') return;
+      const id = tr.dataset.id;
+      const selectedHere = mvpMode ? (mvp === id) : flex.includes(id);
+      if (selectedHere) removePlayer(id);
+      else addPlayer(id);
+    };
+  });
+}
+
+$('#mode-mvp').onclick = () => selectSlot('mvp');
+$('#mode-flex').onclick = () => {
+  const empty = flex.findIndex(x => !x);
+  selectSlot(empty >= 0 ? empty : 0);
+};
+$('#name').oninput = sync;
+$('#email').oninput = sync;
+$('#filter-team').onchange = e => { filterTeam = e.target.value; renderPool(); };
+$('#filter-pos').onchange = e => { filterPos = e.target.value; renderPool(); };
+$('#filter-search').oninput = e => { filterSearch = e.target.value; renderPool(); };
+$('#sort-by').onchange = e => {
+  const [key, dir] = e.target.value.split(':');
+  sortKey = key; sortDir = Number(dir);
+  renderPool();
+};
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.onclick = () => {
+    const key = th.dataset.sort;
+    if (sortKey === key) sortDir *= -1;
+    else { sortKey = key; sortDir = key === 'salary' ? -1 : 1; }
+    const sel = $('#sort-by');
+    const want = `${sortKey}:${sortDir}`;
+    if ([...sel.options].some(o => o.value === want)) sel.value = want;
+    renderPool();
+  };
+});
+function detailPlayer(p) {
+  // Prefer API img; fall back to loaded pool so photos still show
+  return byId(p.id) || p;
+}
+function showEntry(entry, emailed, updated) {
+  $('#build-wrap').classList.add('hidden');
+  const c = $('#confirm');
+  c.classList.add('show');
+  editingExisting = false;
+  $('#go').textContent = 'Submit lineup';
+  if (updated) {
+    $('#confirm-sub').textContent = emailed
+      ? `Thanks, ${entry.name} — your lineup was updated. We also emailed ${entry.email}.`
+      : `Thanks, ${entry.name} — your lineup was updated. You can edit again anytime before 8:15pm ET Monday.`;
+  } else {
+    $('#confirm-sub').textContent = emailed
+      ? `Thanks, ${entry.name} — you're in! We also emailed ${entry.email}.`
+      : `Thanks, ${entry.name} — you're in! Edit anytime before 8:15pm ET Monday with the same email.`;
+  }
+  const rows = (entry.players_detail || []).map(p => {
+    const pl = detailPlayer(p);
+    const pj = entryPlayerProj(p);
+    return `<div class="row">
+      <div class="who">
+        <span class="slotlbl">${p.slot}</span>
+        ${avatar(pl)}
+        <span><span class="team ${pl.team || ''}">${pl.team || ''}</span> <span class="nm">${p.name}</span></span>
+      </div>
+      <span class="rightmeta"><span class="pproj">${formatProjPts(pj)}</span><span class="sal">${money(p.salary)}</span></span>
+    </div>`;
+  }).join('');
+  const projSum = (entry.players_detail || []).reduce((s, p) => {
+    const n = entryPlayerProj(p);
+    return n == null ? s : s + n;
+  }, 0);
+  const hasProj = (entry.players_detail || []).some(p => entryPlayerProj(p) != null);
+  $('#confirm-body').innerHTML = rows
+    + `<div class="row"><strong>Total salary</strong><span class="sal">${money(entry.salary)} / $60,000</span></div>`
+    + (hasProj ? `<div class="row"><strong>Projected pts</strong><span class="pproj">${formatProjPts(projSum)}</span></div>` : '');
+}
+
+$('#build-another').onclick = () => {
+  $('#confirm').classList.remove('show');
+  $('#build-wrap').classList.remove('hidden');
+  editingExisting = false;
+  $('#go').textContent = 'Submit lineup';
+};
+
+function loadEntryIntoBuilder(entry) {
+  $('#confirm').classList.remove('show');
+  $('#build-wrap').classList.remove('hidden');
+  $('#name').value = entry.name || '';
+  $('#email').value = entry.email || '';
+  mvp = entry.mvp || null;
+  flex = [...(entry.flex || [])];
+  while (flex.length < FLEX_N) flex.push(null);
+  flex = flex.slice(0, FLEX_N);
+  editingExisting = true;
+  $('#go').textContent = 'Update lineup';
+  $('#lookup-result').innerHTML = '';
+  selectSlot('mvp');
+  $('#msg').textContent = locked ? 'Entries are locked — viewing only.' : 'Lineup loaded — edit and hit Update lineup.';
+  $('#msg').className = locked ? 'bad' : 'ok';
+}
+
+$('#go').onclick = async () => {
+  const body = { name: $('#name').value.trim(), email: $('#email').value.trim(), mvp, flex };
+  const r = await fetch('/api/lineup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) { $('#msg').textContent = j.error || 'Error'; $('#msg').className = 'bad'; return; }
+  $('#msg').textContent = '';
+  showEntry(j.entry, j.emailed, j.updated);
+};
+
+$('#lookup-btn').onclick = async () => {
+  const email = $('#lookup-email').value.trim();
+  const box = $('#lookup-result');
+  if (!email) { box.innerHTML = '<span class="bad">Enter your email</span>'; return; }
+  const r = await fetch('/api/lookup?email=' + encodeURIComponent(email));
+  const j = await r.json();
+  if (!r.ok) { box.innerHTML = `<span class="bad">${j.error || 'Not found'}</span>`; return; }
+  const e = j.entry;
+  const editBtn = locked
+    ? ''
+    : `<button type="button" id="lookup-edit" style="margin-top:1rem;margin-right:.5rem;padding:.65rem 1rem;border:0;border-radius:8px;background:#d4b56a;color:#111;font-weight:700;cursor:pointer">Edit lineup</button>`;
+  const lookupRows = (e.players_detail || []).map(p => {
+    const pl = detailPlayer(p);
+    const pj = entryPlayerProj(p);
+    return `<div class="row">
+        <div class="who">
+          <span class="slotlbl">${p.slot}</span>
+          ${avatar(pl)}
+          <span><span class="team ${pl.team || ''}">${pl.team || ''}</span> <span class="nm">${p.name}</span></span>
+        </div>
+        <span class="rightmeta"><span class="pproj">${formatProjPts(pj)}</span><span class="sal">${money(p.salary)}</span></span>
+      </div>`;
+  }).join('');
+  const lookupProjSum = (e.players_detail || []).reduce((s, p) => {
+    const n = entryPlayerProj(p);
+    return n == null ? s : s + n;
+  }, 0);
+  const lookupHasProj = (e.players_detail || []).some(p => entryPlayerProj(p) != null);
+  box.innerHTML = `<div class="confirm show" style="margin:0">
+    <h2 style="font-size:1.05rem">${e.name}'s lineup</h2>
+    ${lookupRows}
+    <div class="row"><strong>Total salary</strong><span class="sal">${money(e.salary)} / $60,000</span></div>
+    ${lookupHasProj ? `<div class="row"><strong>Projected pts</strong><span class="pproj">${formatProjPts(lookupProjSum)}</span></div>` : ''}
+    ${editBtn}
+    <button type="button" id="lookup-back" style="margin-top:1rem;padding:.65rem 1rem;border:0;border-radius:8px;background:#2a3548;color:#fff;cursor:pointer">← Back</button>
+  </div>`;
+  const editEl = $('#lookup-edit');
+  if (editEl) editEl.onclick = () => loadEntryIntoBuilder(e);
+  $('#lookup-back').onclick = () => {
+    box.innerHTML = '';
+    $('#lookup-email').value = '';
+    $('#confirm').classList.remove('show');
+    $('#build-wrap').classList.remove('hidden');
+  };
+};
+
+fetch('/api/state').then(r => r.json()).then(d => {
+  players = d.players; CAP = d.cap; FLEX_N = d.flex_n;
+  locked = !!d.locked;
+  lockAt = d.lock_at ? new Date(d.lock_at) : null;
+  flex = Array(FLEX_N).fill(null);
+  const posSel = $('#filter-pos');
+  [...new Set(players.map(p => p.pos))]
+    .sort((a, b) => (POS_ORDER[a] || 99) - (POS_ORDER[b] || 99))
+    .forEach(pos => {
+      const o = document.createElement('option');
+      o.value = pos; o.textContent = pos;
+      posSel.appendChild(o);
+    });
+  selectSlot('mvp');
+  // Re-check lock periodically so the button flips at kickoff without refresh
+  setInterval(() => {
+    if (!lockAt || locked) return;
+    if (Date.now() >= lockAt.getTime()) {
+      locked = true;
+      sync();
+    }
+  }, 15000);
+  // Pull fresh Sleeper injury badges without a full page reload
+  setInterval(async () => {
+    try {
+      const r = await fetch('/api/state');
+      const d = await r.json();
+      if (!d.players) return;
+      locked = !!d.locked;
+      players = d.players;
+      sync();
+    } catch (_) {}
+  }, 60000);
+});
+</script>
+</body>
+</html>
