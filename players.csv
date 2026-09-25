@@ -1,15 +1,53 @@
 Id,Position,First Name,Nickname,Last Name,FPPG,Played,Salary,MVP 1.5x Salary,Game,Team,Opponent,Injury Indicator,Injury Details,Tier,,Roster Position
-mnf-9493,WR,Puka,Puka Nacua,Nacua,,1,9300,13950,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-8150,RB,Kyren,Kyren Williams,Williams,,1,7800,11700,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-421,QB,Matthew,Matthew Stafford,Stafford,,1,7700,11550,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-2133,WR,Davante,Davante Adams,Adams,,1,7700,11550,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-11632,WR,Malik,Malik Nabers,Nabers,,1,7500,11250,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-12508,QB,Jaxson,Jaxson Dart,Dart,,1,7400,11100,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-12481,RB,Cam,Cam Skattebo,Skattebo,,1,6400,9600,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-11586,RB,Blake,Blake Corum,Corum,,1,5800,8700,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-8131,TE,Isaiah,Isaiah Likely,Likely,,1,5500,8250,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-6130,RB,Devin,Devin Singletary,Singletary,,1,5300,7950,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-13285,WR,Malachi,Malachi Fields,Fields,,1,5300,7950,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-6865,TE,Colby,Colby Parkinson,Parkinson,,1,5000,7500,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-7090,WR,Darnell,Darnell Mooney,Mooney,,1,4900,7350,NYG@LAR,NYG,LAR,,,,,MVP - 1.5X Points/AnyFLEX
-mnf-12487,TE,Terrance,Terrance Ferguson,Ferguson,,1,4400,6600,NYG@LAR,LAR,NYG,,,,,MVP - 1.5X Points/AnyFLEX
+134497-136855,RB,Bijan,Bijan Robinson,Robinson,18.450000762939453,2,13000,19500,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-69017,QB,Jordan,Jordan Love,Love,18.639999389648438,2,12400,18600,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-112745,WR,Drake,Drake London,London,5.699999809265137,2,11400,17100,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-169776,WR,Christian,Christian Watson,Watson,22.399999618530273,2,10800,16200,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-44715,QB,Cooper,Cooper Rush,Rush,4.579999923706055,2,10200,15300,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-90572,QB,Tua,Tua Tagovailoa,Tagovailoa,12.764285496303014,14,10200,15300,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-88797,QB,Michael,Michael Penix Jr.,Penix Jr.,14.03111097547743,9,10200,15300,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-119697,RB,MarShawn,MarShawn Lloyd,Lloyd,5.650000095367432,2,9400,14100,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-243753,QB,Jack,Jack Strand,Strand,0.9599999785423279,1,9000,13500,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-160303,TE,Tucker,Tucker Kraft,Kraft,5.25,2,8600,12900,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-166916,WR,Matthew,Matthew Golden,Golden,10.149999618530273,2,8200,12300,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-14377,QB,Tyrod,Tyrod Taylor,Taylor,10.743333180745443,6,8000,12000,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-86080,TE,Kyle,Kyle Pitts Sr.,Pitts Sr.,1,2,7600,11400,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-168916,RB,Kaleb,Kaleb Johnson,Johnson,1.600000023841858,2,7200,10800,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-12533,D,Green Bay,Green Bay Packers,Packers,3,2,7000,10500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-172645,K,Trey,Trey Smack,Smack,10.5,2,6800,10200,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-90562,RB,Brian,Brian Robinson Jr.,Robinson Jr.,5.400000095367432,2,6600,9900,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-6642,K,Nick,Nick Folk,Folk,7,2,6200,9300,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-12525,D,Atlanta,Atlanta Falcons,Falcons,3,2,6000,9000,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-86229,WR,Jahan,Jahan Dotson,Dotson,2.25,2,5600,8400,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-91488,RB,Chris,Chris Brooks,Brooks,3,2,5200,7800,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-112062,WR,Skyy,Skyy Moore,Moore,0.800000011920929,2,4800,7200,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-183251,WR,Zachariah,Zachariah Branch,Branch,1.2000000476837158,2,4600,6900,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-64496,WR,Olamide,Olamide Zaccheaus,Zaccheaus,0.8999999761581421,2,4200,6300,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-40126,TE,Austin,Austin Hooper,Hooper,3,1,3800,5700,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-157973,WR,J. Michael,J. Michael Sturdivant,Sturdivant,0,1,3400,5100,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-92606,WR,Bo,Bo Melton,Melton,0.75,2,3000,4500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-72412,RB,Khalil,Khalil Herbert,Herbert,1.2199999809265136,5,2600,3900,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-48116,TE,Jonnu,Jonnu Smith,Smith,6,1,2400,3600,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-71351,TE,Charlie,Charlie Woerner,Woerner,0,1,1800,2700,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-147168,WR,Chris,Chris Blair,Blair,0.550000011920929,2,1600,2400,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-86747,WR,Dylan,Dylan Drummond,Drummond,1.5399999618530273,5,1400,2100,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-86255,TE,Josh,Josh Whyle,Whyle,1.9000000272478377,7,1200,1800,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-96254,TE,Nick,Nick Muse,Muse,0,1,1200,1800,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-159883,RB,Cash,Cash Jones,Jones,,0,1000,1500,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-87179,TE,Thomas,Thomas Yassmin,Yassmin,,0,1000,1500,ATL@GB,GB,ATL,IR,Undisclosed,,,MVP - 1.5X Points/AnyFLEX
+134497-167561,WR,Antwane,Antwane Wells Jr.,Wells Jr.,,0,1000,1500,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-152717,WR,Beaux,Beaux Collins,Collins,1.1666666666666667,3,1000,1500,ATL@GB,ATL,GB,IR,Undisclosed,,,MVP - 1.5X Points/AnyFLEX
+134497-102933,QB,Kedon,Kedon Slovis,Slovis,-0.03999999910593033,2,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-110617,WR,Isaiah,Isaiah Neyor,Neyor,,0,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-222889,K,Lenny,Lenny Krieg,Krieg,,0,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-160306,RB,Pierre,Pierre Strong Jr.,Strong Jr.,,0,1000,1500,ATL@GB,GB,ATL,Q,Hamstring,,,MVP - 1.5X Points/AnyFLEX
+134497-175539,WR,Vinny,Vinny Anthony II,Anthony II,,0,1000,1500,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-137017,TE,Drake,Drake Dabney,Dabney,0.800000011920929,1,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-120642,WR,Savion,Savion Williams,Williams,1.7083333333333333,12,1000,1500,ATL@GB,GB,ATL,IR,Ankle,,,MVP - 1.5X Points/AnyFLEX
+134497-176325,TE,Jack,Jack Velling,Velling,,0,1000,1500,ATL@GB,ATL,GB,,,,,MVP - 1.5X Points/AnyFLEX
+134497-104019,TE,Matt,Matt Orzech,Orzech,0,2,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-155096,WR,Quincy,Quincy Skinner Jr.,Skinner Jr.,,0,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-120035,TE,Mark,Mark Redman,Redman,,0,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-208360,RB,Damon,Damon Bankston,Bankston,,0,1000,1500,ATL@GB,GB,ATL,,,,,MVP - 1.5X Points/AnyFLEX
+134497-89455,WR,Jayden,Jayden Reed,Reed,2.200000047683716,2,1000,1500,ATL@GB,GB,ATL,D,Neck,,,MVP - 1.5X Points/AnyFLEX
+134497-86646,RB,Trey,Trey Sermon,Sermon,0,1,1000,1500,ATL@GB,ATL,GB,IR,Undisclosed,,,MVP - 1.5X Points/AnyFLEX

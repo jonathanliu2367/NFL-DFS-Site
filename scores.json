@@ -1,183 +1,211 @@
 {
-  "_how": "Put Sleeper full-PPR points next to each player. Then run: python3 score.py",
-  "62239": {
-    "name": "Josh Allen",
-    "pts": 0
+  "_how": "Sleeper full-PPR week 3 2026. Then run: python3 score.py",
+  "136855": {
+    "name": "Bijan Robinson",
+    "pts": 35.3
   },
-  "129368": {
-    "name": "Jahmyr Gibbs",
-    "pts": 0
+  "69017": {
+    "name": "Jordan Love",
+    "pts": 19.48
   },
-  "86997": {
-    "name": "Amon-Ra St. Brown",
-    "pts": 0
+  "112745": {
+    "name": "Drake London",
+    "pts": 28.4
   },
-  "38435": {
-    "name": "Jared Goff",
-    "pts": 0
+  "169776": {
+    "name": "Christian Watson",
+    "pts": 22.6
   },
-  "91626": {
-    "name": "James Cook III",
-    "pts": 0
+  "44715": {
+    "name": "Cooper Rush",
+    "pts": 0.0
   },
-  "111631": {
-    "name": "Jameson Williams",
-    "pts": 0
+  "90572": {
+    "name": "Tua Tagovailoa",
+    "pts": 0.0
   },
-  "63043": {
-    "name": "DJ Moore",
-    "pts": 0
+  "88797": {
+    "name": "Michael Penix Jr.",
+    "pts": 15.04
   },
-  "86518": {
-    "name": "Khalil Shakir",
-    "pts": 0
+  "119697": {
+    "name": "MarShawn Lloyd",
+    "pts": 3.8
   },
-  "40407": {
-    "name": "Joshua Dobbs",
-    "pts": 0
+  "243753": {
+    "name": "Jack Strand",
+    "pts": 0.0
   },
-  "53095": {
-    "name": "Kyle Allen",
-    "pts": 0
+  "160303": {
+    "name": "Tucker Kraft",
+    "pts": 6.6
   },
-  "145558": {
-    "name": "Dalton Kincaid",
-    "pts": 0
+  "166916": {
+    "name": "Matthew Golden",
+    "pts": 21.0
   },
-  "105646": {
-    "name": "Sam LaPorta",
-    "pts": 0
+  "14377": {
+    "name": "Tyrod Taylor",
+    "pts": 0.0
   },
-  "65128": {
-    "name": "Tyler Bass",
-    "pts": 0
+  "86080": {
+    "name": "Kyle Pitts Sr.",
+    "pts": 1.5
   },
-  "140176": {
-    "name": "Jake Bates",
-    "pts": 0
+  "168916": {
+    "name": "Kaleb Johnson",
+    "pts": 2.6
   },
-  "12526": {
-    "name": "Buffalo Bills DST",
-    "pts": 0
+  "12533": {
+    "name": "Green Bay Packers DST",
+    "pts": -2.0
   },
-  "12532": {
-    "name": "Detroit Lions DST",
-    "pts": 0
+  "172645": {
+    "name": "Trey Smack",
+    "pts": 1.0
   },
-  "157467": {
-    "name": "Keon Coleman",
-    "pts": 0
+  "90562": {
+    "name": "Brian Robinson Jr.",
+    "pts": 11.0
   },
-  "63050": {
-    "name": "Ty Johnson",
-    "pts": 0
+  "6642": {
+    "name": "Nick Folk",
+    "pts": 10.0
   },
-  "103694": {
-    "name": "Ray Davis",
-    "pts": 0
+  "12525": {
+    "name": "Atlanta Falcons DST",
+    "pts": 6.0
   },
-  "64585": {
-    "name": "Dawson Knox",
-    "pts": 0
+  "86229": {
+    "name": "Jahan Dotson",
+    "pts": 2.1
   },
-  "168076": {
-    "name": "Sione Vaki",
-    "pts": 0
+  "91488": {
+    "name": "Chris Brooks",
+    "pts": 1.4
   },
-  "87418": {
-    "name": "Joshua Palmer",
-    "pts": 0
+  "112062": {
+    "name": "Skyy Moore",
+    "pts": 6.1
   },
-  "183488": {
-    "name": "Isaac TeSlaa",
-    "pts": 0
+  "183251": {
+    "name": "Zachariah Branch",
+    "pts": 1.7
   },
-  "69558": {
-    "name": "Greg Dortch",
-    "pts": 0
+  "64496": {
+    "name": "Olamide Zaccheaus",
+    "pts": 2.9
   },
-  "158402": {
-    "name": "Skyler Bell",
-    "pts": 0
+  "40126": {
+    "name": "Austin Hooper",
+    "pts": 9.1
   },
-  "91046": {
-    "name": "Brock Wright",
-    "pts": 0
+  "157973": {
+    "name": "J. Michael Sturdivant",
+    "pts": 5.2
   },
-  "139284": {
-    "name": "Frank Gore Jr.",
-    "pts": 0
+  "92606": {
+    "name": "Bo Melton",
+    "pts": 0.0
   },
-  "60451": {
-    "name": "Tyler Conklin",
-    "pts": 0
+  "72412": {
+    "name": "Khalil Herbert",
+    "pts": 0.0
   },
-  "200291": {
-    "name": "Jackson Hawes",
-    "pts": 0
+  "48116": {
+    "name": "Jonnu Smith",
+    "pts": 3.6
   },
-  "185827": {
-    "name": "Jacob Saylors",
-    "pts": 0
+  "71351": {
+    "name": "Charlie Woerner",
+    "pts": 0.0
   },
-  "110977": {
-    "name": "Thomas Gordon",
-    "pts": 0
+  "147168": {
+    "name": "Chris Blair",
+    "pts": 2.0
   },
-  "151938": {
-    "name": "Luke Altmyer",
-    "pts": 0
+  "86747": {
+    "name": "Dylan Drummond",
+    "pts": 0.0
   },
-  "152128": {
-    "name": "Dominic Lovett",
-    "pts": 0
+  "86255": {
+    "name": "Josh Whyle",
+    "pts": 0.0
   },
-  "104388": {
-    "name": "Tom Kennedy",
-    "pts": 0
+  "96254": {
+    "name": "Nick Muse",
+    "pts": 0.0
   },
-  "69833": {
-    "name": "Shane Buechele",
-    "pts": 0
+  "159883": {
+    "name": "Cash Jones",
+    "pts": 0.0
   },
-  "93845": {
-    "name": "Tay Martin",
-    "pts": 0
+  "87179": {
+    "name": "Thomas Yassmin",
+    "pts": 0.0
   },
-  "157975": {
-    "name": "Keleki Latu",
-    "pts": 0
+  "167561": {
+    "name": "Antwane Wells Jr.",
+    "pts": 0.0
   },
-  "129302": {
-    "name": "Stephen Gosnell",
-    "pts": 0
+  "152717": {
+    "name": "Beaux Collins",
+    "pts": 0.0
   },
-  "119642": {
-    "name": "Ja'Mori Maclin",
-    "pts": 0
+  "102933": {
+    "name": "Kedon Slovis",
+    "pts": 0.0
   },
-  "92575": {
-    "name": "Isiah Pacheco",
-    "pts": 0
+  "110617": {
+    "name": "Isaiah Neyor",
+    "pts": 0.0
   },
-  "63967": {
-    "name": "Lucky Jackson",
-    "pts": 0
+  "222889": {
+    "name": "Lenny Krieg",
+    "pts": 0.0
   },
-  "139114": {
-    "name": "Jabari Small",
-    "pts": 0
+  "160306": {
+    "name": "Pierre Strong Jr.",
+    "pts": 0.0
   },
-  "166770": {
-    "name": "Kendrick Law",
-    "pts": 0
+  "175539": {
+    "name": "Vinny Anthony II",
+    "pts": 0.0
   },
-  "151799": {
-    "name": "Jackson Meeks",
-    "pts": 0
+  "137017": {
+    "name": "Drake Dabney",
+    "pts": 0.0
   },
-  "56059": {
-    "name": "Trent Sherfield Sr.",
-    "pts": 0
+  "120642": {
+    "name": "Savion Williams",
+    "pts": 0.0
+  },
+  "176325": {
+    "name": "Jack Velling",
+    "pts": 0.0
+  },
+  "104019": {
+    "name": "Matt Orzech",
+    "pts": 0.0
+  },
+  "155096": {
+    "name": "Quincy Skinner Jr.",
+    "pts": 0.0
+  },
+  "120035": {
+    "name": "Mark Redman",
+    "pts": 0.0
+  },
+  "208360": {
+    "name": "Damon Bankston",
+    "pts": 0.0
+  },
+  "89455": {
+    "name": "Jayden Reed",
+    "pts": 0.0
+  },
+  "86646": {
+    "name": "Trey Sermon",
+    "pts": 0.0
   }
 }

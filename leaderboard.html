@@ -9,46 +9,309 @@
   .wrap{max-width:820px;margin:0 auto;padding:1.25rem}
   h1{margin:0 0 .25rem;font-size:1.4rem}
   .sub{color:#9aabc4;margin-bottom:1.25rem;font-size:.9rem}
-  .card{background:#151c2c;border:1px solid #2a3548;border-radius:12px;margin-bottom:1rem;overflow:hidden}
-  .card header{display:flex;align-items:center;gap:1rem;padding:1rem 1.1rem;border-bottom:1px solid #2a3548}
+  .live-pill{display:inline-flex;align-items:center;gap:.35rem;margin-left:.4rem;padding:.15rem .45rem;border-radius:999px;background:#1a3d2a;color:#7dcea0;font-size:.72rem;font-weight:600;vertical-align:middle}
+  .live-pill .dot{width:.45rem;height:.45rem;border-radius:50%;background:#3ecf8e;animation:pulse 1.6s ease infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .card{background:#151c2c;border:1px solid #2a3548;border-radius:12px;margin-bottom:.85rem;overflow:hidden}
+  .card.perfect{border-color:#d4b56a66}
+  .card-toggle{display:flex;align-items:center;gap:1rem;width:100%;padding:1rem 1.1rem;border:0;background:transparent;color:inherit;cursor:pointer;text-align:left;font:inherit}
+  .card-toggle:hover{background:#1c2538}
+  .card[data-open="1"] .card-toggle{border-bottom:1px solid #2a3548}
   .rank{font-size:1.4rem;min-width:2.2rem}
+  .who{min-width:0;flex:1}
   .card h2{margin:0;font-size:1.1rem}
   .meta{color:#9aabc4;font-size:.8rem;margin-top:.15rem}
   .total{margin-left:auto;font-size:1.6rem;font-weight:800;color:#d4b56a;font-variant-numeric:tabular-nums}
   .total span{font-size:.75rem;font-weight:600;color:#9aabc4}
+  .chev{color:#9aabc4;font-size:1rem;transition:transform .15s}
+  .card[data-open="1"] .chev{transform:rotate(180deg)}
+  .detail{padding:0}
   table{width:100%;border-collapse:collapse;font-size:.9rem}
-  th,td{padding:.55rem .9rem;text-align:left;border-bottom:1px solid #2a3548}
+  th,td{padding:.55rem .9rem;text-align:left;border-bottom:1px solid #2a3548;vertical-align:middle}
   th{color:#9aabc4;font-size:.72rem;font-weight:500}
+  tr:last-child td{border-bottom:0}
+  tr.mvp td{background:#d4b56a14}
   .num{text-align:right;font-variant-numeric:tabular-nums}
+  .own{color:#9ec5ff}
+  .mvpown{color:#d4b56a}
+  .sal{color:#9aabc4}
+  .pname{display:flex;align-items:center;gap:.55rem}
+  .avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;background:#0a0e18;border:1px solid #2a3548;flex-shrink:0}
   .pool{margin-top:2rem}
+  .pool-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.65rem;flex-wrap:wrap}
+  .pool-head h2{margin:0;font-size:1rem;color:#9aabc4}
+  .pool-search{flex:1;min-width:160px;max-width:280px;padding:.45rem .7rem;border:1px solid #2a3548;border-radius:8px;background:#0a0e18;color:#eef2f8;font:inherit;font-size:.85rem}
+  .pool-search:focus{outline:1px solid #4a6a9a;border-color:#4a6a9a}
+  .pool-search::placeholder{color:#6a7a94}
+  .standings-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.65rem;flex-wrap:wrap}
+  .standings-head h2{margin:0;font-size:1rem;color:#9aabc4}
+  .standings-search{flex:1;min-width:160px;max-width:280px;padding:.45rem .7rem;border:1px solid #2a3548;border-radius:8px;background:#0a0e18;color:#eef2f8;font:inherit;font-size:.85rem}
+  .standings-search:focus{outline:1px solid #4a6a9a;border-color:#4a6a9a}
+  .standings-search::placeholder{color:#6a7a94}
+  .no-match{color:#9aabc4;font-size:.9rem;padding:.5rem 0 1rem}
+  th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  th.sortable:hover{color:#eef2f8}
+  th.sortable .ind{opacity:.35;margin-left:.2rem;font-size:.65rem}
+  th.sortable.active .ind{opacity:1;color:#d4b56a}
+  a.home{color:#9ec5ff;font-size:.85rem;text-decoration:none}
+  a.home:hover{text-decoration:underline}
+  .err{color:#f0a0a0;padding:1rem 0}
+  .loading{color:#9aabc4;padding:1rem 0}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Genius Sports NFL DFS — Leaderboard</h1>
-  <div class="sub">Giants @ Rams · Full PPR (Sleeper) · MVP = 1.5× · 0 entries</div>
-  
-        <article class="card">
-          <header>
-            <span class="rank">🥇</span>
-            <div>
-              <h2>Jonathan Liu</h2>
-              <div class="meta">$58,400 salary</div>
-            </div>
-            <div class="total">0.00 <span>pts</span></div>
-          </header>
-          <table>
-            <thead><tr><th>Slot</th><th>Player</th><th>Raw</th><th>Pts</th></tr></thead>
-            <tbody><tr><td>MVP</td><td>Jahmyr Gibbs</td><td class='num'>0.00 × 1.5</td><td class='num'><strong>0.00</strong></td></tr><tr><td>FLEX 1</td><td>Amon-Ra St. Brown</td><td class='num'>0.00</td><td class='num'><strong>0.00</strong></td></tr><tr><td>FLEX 2</td><td>Jared Goff</td><td class='num'>0.00</td><td class='num'><strong>0.00</strong></td></tr><tr><td>FLEX 3</td><td>Jameson Williams</td><td class='num'>0.00</td><td class='num'><strong>0.00</strong></td></tr><tr><td>FLEX 4</td><td>Sam LaPorta</td><td class='num'>0.00</td><td class='num'><strong>0.00</strong></td></tr><tr><td>FLEX 5</td><td>Tay Martin</td><td class='num'>0.00</td><td class='num'><strong>0.00</strong></td></tr></tbody>
-          </table>
-        </article>
+  <a class="home" href="/">← Back to contest</a>
+  <h1>Genius Sports NFL DFS — Leaderboard <span class="live-pill" id="livePill" hidden><span class="dot"></span> LIVE</span></h1>
+  <div class="sub" id="sub"></div>
+  <div class="standings-head">
+    <h2>Standings</h2>
+    <input class="standings-search" id="nameSearch" type="search" placeholder="Search by name…" autocomplete="off"/>
+  </div>
+  <div id="standings"></div>
+  <div id="standingsEmpty" class="no-match" hidden>No lineups match that name.</div>
   <div class="pool">
-    <h2 style="font-size:1rem;color:#9aabc4">Player pool scores</h2>
-    <div class="card"><table>
-      <thead><tr><th>Player</th><th class="num">Pts</th></tr></thead>
-      <tbody><tr><td colspan='2'>No scores entered yet</td></tr></tbody>
+    <div class="pool-head">
+      <h2>Player pool</h2>
+      <input class="pool-search" id="poolSearch" type="search" placeholder="Search player…" autocomplete="off"/>
+    </div>
+    <div class="card"><table id="poolTable">
+      <thead><tr>
+        <th class="sortable" data-key="name" data-type="str">Player <span class="ind">▲</span></th>
+        <th class="sortable num" data-key="sal" data-type="num">Sal <span class="ind">▼</span></th>
+        <th class="sortable num active" data-key="pts" data-type="num">Pts <span class="ind">▼</span></th>
+        <th class="sortable num" data-key="own" data-type="num">Own% <span class="ind">▼</span></th>
+        <th class="sortable num" data-key="mvp" data-type="num">MVP% <span class="ind">▼</span></th>
+      </tr></thead>
+      <tbody id="poolBody"></tbody>
     </table></div>
   </div>
+  <div class="pool" id="perfectWrap" hidden>
+    <h2 style="font-size:1rem;color:#9aabc4;margin:0 0 .65rem">Perfect lineup</h2>
+    <div id="perfectCard"></div>
+  </div>
 </div>
+<script>
+const DEFAULT_IMG = 'https://sleepercdn.com/images/v2/icons/player_default.webp';
+const openIds = new Set();
+let sortKey = 'pts', sortDir = 'desc';
+let pollSec = 60;
+let timer = null;
+
+const money = n => '$' + Number(n || 0).toLocaleString();
+const pct = n => `${Number(n || 0)}%`;
+const fmtPts = n => Number(n || 0).toFixed(2);
+
+function avatar(src) {
+  return `<img class="avatar" src="${src || DEFAULT_IMG}" alt="" loading="lazy" onerror="this.src='${DEFAULT_IMG}'"/>`;
+}
+
+function rowHtml(r) {
+  const mult = r.mult && r.mult !== 1 ? ` × ${r.mult}` : '';
+  const cls = r.slot === 'MVP' ? 'mvp' : '';
+  return `<tr class="${cls}"><td>${r.slot}</td>
+    <td><div class="pname">${avatar(r.img)}<span>${r.name}</span></div></td>
+    <td class="num sal">${money(r.sal)}</td>
+    <td class="num">${fmtPts(r.base)}${mult}</td>
+    <td class="num"><strong>${fmtPts(r.pts)}</strong></td>
+    <td class="num own">${pct(r.own_pct)}</td>
+    <td class="num mvpown">${pct(r.mvp_pct)}</td></tr>`;
+}
+
+function cardHtml(e, extraClass = '') {
+  const open = openIds.has(String(e.id)) ? '1' : '0';
+  const hidden = open === '1' ? '' : 'hidden';
+  const name = e.name || '';
+  return `<article class="card ${extraClass}" data-id="${e.id}" data-name="${name.toLowerCase()}" data-open="${open}">
+    <button type="button" class="card-toggle" aria-expanded="${open === '1'}">
+      <span class="rank">${e.medal || ''}</span>
+      <div class="who">
+        <h2>${name}</h2>
+        <div class="meta">${money(e.salary)} salary · click to view lineup</div>
+      </div>
+      <div class="total">${fmtPts(e.total)} <span>pts</span></div>
+      <span class="chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="detail" ${hidden}>
+      <table>
+        <thead><tr><th>Slot</th><th>Player</th><th class="num">Sal</th><th class="num">Raw</th><th class="num">Pts</th><th class="num">Own</th><th class="num">MVP</th></tr></thead>
+        <tbody>${(e.rows || []).map(rowHtml).join('')}</tbody>
+      </table>
+    </div>
+  </article>`;
+}
+
+function applyNameFilter() {
+  const q = (document.getElementById('nameSearch').value || '').trim().toLowerCase();
+  const standings = document.getElementById('standings');
+  const cards = Array.from(standings.querySelectorAll('.card'));
+  let shown = 0;
+  cards.forEach(c => {
+    const name = c.dataset.name || '';
+    const match = !q || name.includes(q);
+    c.style.display = match ? '' : 'none';
+    if (match) shown += 1;
+  });
+  const empty = document.getElementById('standingsEmpty');
+  empty.hidden = !q || shown > 0 || cards.length === 0;
+}
+
+function bindCards(root) {
+  root.querySelectorAll('.card-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card');
+      const detail = card.querySelector('.detail');
+      const open = card.dataset.open === '1';
+      card.dataset.open = open ? '0' : '1';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      detail.hidden = open;
+      const id = String(card.dataset.id || '');
+      if (id) {
+        if (open) openIds.delete(id);
+        else openIds.add(id);
+      }
+    });
+  });
+}
+
+function applyPoolSortFilter() {
+  const tbody = document.getElementById('poolBody');
+  const search = document.getElementById('poolSearch');
+  const q = (search.value || '').trim().toLowerCase();
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+  rows.forEach(r => {
+    const name = r.dataset.name || '';
+    r.style.display = !q || name.includes(q) ? '' : 'none';
+  });
+  const visible = rows.filter(r => r.style.display !== 'none');
+  visible.sort((a, b) => {
+    let av = a.dataset[sortKey], bv = b.dataset[sortKey];
+    if (sortKey !== 'name') {
+      av = parseFloat(av) || 0;
+      bv = parseFloat(bv) || 0;
+      return sortDir === 'desc' ? bv - av : av - bv;
+    }
+    av = (av || '').toLowerCase();
+    bv = (bv || '').toLowerCase();
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  visible.forEach(r => tbody.appendChild(r));
+}
+
+function renderPool(pool) {
+  const tbody = document.getElementById('poolBody');
+  tbody.innerHTML = (pool || []).map(p => `
+    <tr data-name="${(p.name || '').toLowerCase()}" data-pts="${p.pts}" data-sal="${p.sal}"
+        data-own="${p.own_pct}" data-mvp="${p.mvp_pct}">
+      <td><div class="pname">${avatar(p.img)}<span>${p.name}</span></div></td>
+      <td class="num sal">${money(p.sal)}</td>
+      <td class="num">${fmtPts(p.pts)}</td>
+      <td class="num own">${pct(p.own_pct)}</td>
+      <td class="num mvpown">${pct(p.mvp_pct)}</td>
+    </tr>`).join('') || `<tr><td colspan="5">No players</td></tr>`;
+  applyPoolSortFilter();
+}
+
+function render(data) {
+  const n = (data.entries || []).length;
+  const updated = data.scores_updated_at
+    ? new Date(data.scores_updated_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+    : '—';
+  document.getElementById('sub').textContent =
+    `${data.matchup || 'Showdown'} · Full PPR (Sleeper) · ${n} entries · Updated ${updated}`;
+  document.getElementById('livePill').hidden = !data.live;
+
+  const standings = document.getElementById('standings');
+  if (!n) {
+    standings.innerHTML = '<p class="loading">No entries yet.</p>';
+    document.getElementById('standingsEmpty').hidden = true;
+  } else {
+    standings.innerHTML = data.entries.map(e => cardHtml(e)).join('');
+    bindCards(standings);
+    applyNameFilter();
+  }
+
+  renderPool(data.pool);
+
+  const wrap = document.getElementById('perfectWrap');
+  const pcard = document.getElementById('perfectCard');
+  if (data.perfect && data.perfect.rows && data.perfect.rows.length) {
+    wrap.hidden = false;
+    pcard.innerHTML = cardHtml(data.perfect, 'perfect');
+    bindCards(pcard);
+  } else {
+    wrap.hidden = true;
+    pcard.innerHTML = '';
+  }
+
+  if (data.poll_sec) pollSec = data.poll_sec;
+}
+
+async function refresh() {
+  try {
+    const r = await fetch('/api/leaderboard', { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    render(data);
+  } catch (e) {
+    const el = document.getElementById('standings');
+    if (!el.querySelector('.card')) {
+      el.innerHTML = `<div class="err">Could not load leaderboard (${e.message}). Retrying…</div>`;
+    }
+  }
+}
+
+document.getElementById('nameSearch').addEventListener('input', applyNameFilter);
+document.getElementById('poolSearch').addEventListener('input', applyPoolSortFilter);
+document.querySelectorAll('#poolTable th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    const type = th.dataset.type;
+    if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    else {
+      sortKey = key;
+      sortDir = type === 'str' ? 'asc' : 'desc';
+    }
+    document.querySelectorAll('#poolTable th.sortable').forEach(h => {
+      h.classList.remove('active');
+      const ind = h.querySelector('.ind');
+      if (ind) ind.textContent = h.dataset.type === 'str' ? '▲' : '▼';
+    });
+    th.classList.add('active');
+    const ind = th.querySelector('.ind');
+    if (ind) ind.textContent = sortDir === 'asc' ? '▲' : '▼';
+    applyPoolSortFilter();
+  });
+});
+
+// Instant first paint from server-injected data (no blank flash)
+if (window.__BOOT__ && window.__BOOT__.ok) {
+  render(window.__BOOT__);
+} else {
+  document.getElementById('standings').innerHTML = '<div class="loading">Loading standings…</div>';
+  document.getElementById('sub').textContent = 'Loading…';
+}
+
+const startPolling = () => {
+  const tick = () => {
+    timer = setTimeout(async () => {
+      await refresh();
+      tick();
+    }, Math.max(15, pollSec) * 1000);
+  };
+  tick();
+};
+
+if (window.__BOOT__ && window.__BOOT__.ok) {
+  startPolling();
+} else {
+  refresh().then(startPolling);
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) refresh();
+});
+</script>
 </body>
 </html>

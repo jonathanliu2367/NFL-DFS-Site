@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Genius Sports NFL DFS — NYG @ LAR</title>
+<title>Genius Sports NFL DFS — ATL @ GB</title>
 <style>
   body{margin:0;font-family:system-ui,sans-serif;background:#0f1420;color:#eef2f8}
   header{padding:1.2rem 1.4rem;background:linear-gradient(90deg,#0b226555,#00359455);border-bottom:1px solid #2a3548}
@@ -18,8 +18,13 @@
   .modes button.on{background:#1493ff;border-color:#1493ff;color:#fff}
   .banner{background:#1493ff22;border:1px solid #1493ff66;color:#b8d9ff;padding:.65rem .85rem;border-radius:8px;font-size:.82rem;margin-bottom:.75rem}
   .bad{color:#ff6b6b}.ok{color:#3ecf8e}
-  table{width:100%;border-collapse:collapse;background:#151c2c;border-radius:10px;overflow:hidden;border:1px solid #2a3548}
-  th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid #2a3548;font-size:.9rem}
+  table{width:100%;border-collapse:collapse;background:#151c2c;border-radius:10px;border:1px solid #2a3548}
+  th,td{padding:.55rem .7rem;text-align:left;border-bottom:1px solid #2a3548;font-size:.9rem;overflow:visible}
+  thead th:first-child{border-radius:10px 0 0 0}
+  thead th:last-child{border-radius:0 10px 0 0}
+  tbody tr:last-child td:first-child{border-radius:0 0 0 10px}
+  tbody tr:last-child td:last-child{border-radius:0 0 10px 0}
+  tbody tr:last-child td{border-bottom:0}
   th{color:#9aabc4;font-size:.72rem;font-weight:500}
   th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
   th.sortable:hover{color:#eef2f8}
@@ -33,12 +38,16 @@
   tr.locked{opacity:.45;cursor:not-allowed} tr.locked:hover{background:transparent}
   .note{color:#9aabc4;font-size:.72rem;margin-left:.35rem;font-style:italic}
   .team{font-size:.68rem;font-weight:700;padding:.12rem .35rem;border-radius:3px;margin-right:.35rem}
-  .NYG{background:#0b2265}.LAR{background:#003594}
+  .ATL{background:#a71930}.GB{background:#203731}
   .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#0a0e18;border:1px solid #2a3548;flex-shrink:0;vertical-align:middle}
   .avatar.sm{width:28px;height:28px}
   .pname{display:flex;align-items:center;gap:.55rem}
   .pname .meta{display:flex;flex-direction:column;gap:.1rem;min-width:0}
   .pname .nm{font-weight:600;line-height:1.2}
+  .inj{display:inline-block;vertical-align:middle;color:#ff6b6b;font-size:.75rem;cursor:help;font-weight:700;padding:.4rem .5rem;margin:-.4rem -.1rem -.4rem .2rem;border-radius:4px;line-height:1}
+  .inj:hover,.inj:focus-visible{background:#ff6b6b22}
+  .inj-tip{position:fixed;z-index:9999;background:#1a2233;color:#eef2f8;border:1px solid #3a4a66;border-radius:8px;padding:.55rem .7rem;font-size:.78rem;font-weight:500;line-height:1.4;max-width:280px;box-shadow:0 8px 24px #000a;opacity:0;pointer-events:none;transition:opacity .1s;white-space:normal}
+  .inj-tip.show{opacity:1}
   .slot .pname{gap:.45rem}
   .sal{color:#d4b56a;font-variant-numeric:tabular-nums}
   .proj{color:#9ec5ff;font-variant-numeric:tabular-nums;font-size:.9rem}
@@ -95,19 +104,66 @@
   .scoring tr:last-child td{border-bottom:0}
   .scoring td.pts{width:32%;text-align:right;color:#d4b56a;font-weight:600;font-variant-numeric:tabular-nums;white-space:normal;word-break:break-word}
   .scoring .note{margin-top:1rem;font-size:.85rem;color:#9aabc4;line-height:1.4}
+  .gl-backdrop{display:none;position:fixed;inset:0;background:#0a0e18cc;z-index:10000;align-items:center;justify-content:center;padding:1rem;box-sizing:border-box}
+  .gl-backdrop.show{display:flex}
+  .gl-modal{background:#151c2c;border:1px solid #2a3548;border-radius:12px;width:min(720px,100%);max-height:min(85vh,720px);display:flex;flex-direction:column;box-shadow:0 20px 60px #000a}
+  .gl-head{display:flex;align-items:center;gap:.75rem;padding:1rem 1.1rem;border-bottom:1px solid #2a3548}
+  .gl-head .info{min-width:0;flex:1}
+  .gl-head h3{margin:0;font-size:1.05rem;font-weight:700;line-height:1.2}
+  .gl-head .meta{color:#9aabc4;font-size:.8rem;margin-top:.2rem}
+  .gl-close{border:0;background:#2a3548;color:#eef2f8;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1.1rem;line-height:1;flex-shrink:0}
+  .gl-close:hover{background:#3a4a66}
+  .gl-body{overflow:auto;padding:.5rem 0 1rem;-webkit-overflow-scrolling:touch}
+  .gl-note{padding:.35rem 1.1rem .6rem;font-size:.78rem;color:#9aabc4}
+  .gl-table{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+  .gl-table th,.gl-table td{padding:.45rem .55rem;text-align:right;border-bottom:1px solid #2a3548;white-space:nowrap}
+  .gl-table td.heat{border-radius:5px;font-weight:600}
+  .gl-table td.h5{background:#1db95488;color:#f2fff7}
+  .gl-table td.h4{background:#1db95455;color:#e8fff0}
+  .gl-table td.h3{background:#d4b56a44;color:#f5edd8}
+  .gl-table td.h2{background:#e67e224e;color:#ffebd9}
+  .gl-table td.h1{background:#e74c3c66;color:#ffe8e8}
+  .gl-table th{color:#9aabc4;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0;background:#151c2c;z-index:1}
+  .gl-table th:first-child,.gl-table td:first-child,
+  .gl-table th:nth-child(2),.gl-table td:nth-child(2){text-align:left}
+  .gl-table tr.bye td{color:#5a6a82;font-style:italic}
+  .gl-table tr.dnp td{color:#9aabc4}
+  .gl-table .dnp-tag{display:inline-block;margin-left:.35rem;font-size:.65rem;font-weight:700;letter-spacing:.04em;color:#ff8e8e;border:1px solid #e74c3c66;border-radius:4px;padding:.05rem .3rem;vertical-align:middle}
+  .gl-table .pts{color:#d4b56a;font-weight:700}
+  .gl-table .mvppts{color:#9ec5ff;font-weight:700}
+  .gl-empty{padding:2rem 1.1rem;text-align:center;color:#9aabc4;font-size:.9rem}
+  .pname .plink{cursor:pointer;border-radius:4px}
+  .pname .plink:hover{color:#9ec5ff;text-decoration:underline;text-underline-offset:2px}
+  .pname .avatar.plink{cursor:pointer}
+  .pname .avatar.plink:hover{outline:2px solid #1493ff66;outline-offset:1px}
 </style>
 </head>
 <body>
+<div id="gl-backdrop" class="gl-backdrop" aria-hidden="true">
+  <div class="gl-modal" role="dialog" aria-modal="true" aria-labelledby="gl-title">
+    <div class="gl-head">
+      <img id="gl-avatar" class="avatar" alt=""/>
+      <div class="info">
+        <h3 id="gl-title">Player</h3>
+        <div class="meta" id="gl-meta"></div>
+      </div>
+      <button type="button" class="gl-close" id="gl-close" aria-label="Close">×</button>
+    </div>
+    <div class="gl-note" id="gl-note"></div>
+    <div class="gl-body" id="gl-body"><div class="gl-empty">Loading…</div></div>
+  </div>
+</div>
 <header>
-  <h1>Genius Sports NFL DFS — Giants @ Rams</h1>
+  <h1>Genius Sports NFL DFS — Falcons @ Packers</h1>
+  <p class="sub" style="margin-top:.45rem"><a href="/leaderboard" style="color:#d4b56a;font-weight:700;text-decoration:none">Live leaderboard →</a></p>
 </header>
 <div class="rules">
-  <strong>Rules:</strong> Full PPR Sleeper scoring · $60,000 salary cap · MVP costs/scores 1.5× · One entry per person (edit anytime until lock) · Entries <strong>lock at 8:15pm ET Monday</strong>
+  <strong>Rules:</strong> Full PPR Sleeper scoring · $60,000 salary cap · MVP costs/scores 1.5× · One entry per person (edit anytime until lock) · Entries <strong>lock at 8:15pm ET Thursday</strong>
 </div>
 
 <div class="lookup">
   <h2 style="margin:0 0 .35rem;font-size:1rem">Look up my lineup</h2>
-  <p style="margin:0 0 .75rem;color:#9aabc4;font-size:.85rem">Already submitted? Look it up anytime — you can edit until 8:15pm ET Monday.</p>
+  <p style="margin:0 0 .75rem;color:#9aabc4;font-size:.85rem">Already submitted? Look it up anytime — you can edit until 8:15pm ET Thursday.</p>
   <div class="lookup-box">
     <div class="field">
       <label for="lookup-email">Email</label>
@@ -143,7 +199,7 @@
     <div class="banner" id="banner">Click a lineup slot, then click a player to fill it.</div>
     <div class="filters">
       <input id="filter-search" type="search" placeholder="Search player…" autocomplete="off" spellcheck="false"/>
-      <select id="filter-team"><option value="">All teams</option><option value="NYG">NYG</option><option value="LAR">LAR</option></select>
+      <select id="filter-team"><option value="">All teams</option><option value="ATL">ATL</option><option value="GB">GB</option></select>
       <select id="filter-pos"><option value="">All positions</option></select>
       <select id="sort-by">
         <option value="salary:-1">Salary (high → low)</option>
@@ -275,7 +331,224 @@ const money = n => '$' + Math.round(n).toLocaleString();
 const byId = id => players.find(p => p.id === id);
 const displayName = p => (p.pos === 'DST' && !/DST$/i.test(p.name)) ? `${p.name} DST` : p.name;
 const avatar = (p, cls='') => `<img class="avatar ${cls}" src="${p.img || ''}" alt="" loading="lazy" onerror="this.src='https://sleepercdn.com/images/v2/icons/player_default.webp'"/>`;
+const avatarLink = (p, cls='') => `<img class="avatar ${cls} plink" data-gl="${p.id}" src="${p.img || ''}" alt="" loading="lazy" title="View game log" onerror="this.src='https://sleepercdn.com/images/v2/icons/player_default.webp'"/>`;
 const isMvpMode = () => activeSlot === 'mvp';
+
+// Plain-English hover text for FanDuel / Sleeper injury tags
+const INJ_MEANING = {
+  P: 'Probable — expected to play (minor issue)',
+  Q: 'Questionable — may or may not play (often a game-time decision)',
+  D: 'Doubtful — unlikely to play',
+  O: 'Out — will not play this game',
+  IR: 'Injured reserve — out for an extended period (usually several weeks+)',
+  PUP: 'Physically Unable to Perform — not currently available',
+  SUS: 'Suspended — not eligible to play',
+  S: 'Suspended — not eligible to play',
+  COVID: 'COVID-19 list — not currently available',
+  C: 'COVID-19 list — not currently available',
+  NA: 'Status not available',
+  NFI: 'Non-football injury — not currently available',
+  DNR: 'Did not report — not with the team',
+};
+function injTipText(p) {
+  const code = String(p.inj).trim().toUpperCase();
+  const meaning = INJ_MEANING[code] || `${code} — injury designation`;
+  const detail = (p.inj_detail || '').trim();
+  if (!detail) return meaning;
+  // Body-part / notes only — never strip a single letter off words like Out / Questionable
+  let body = detail
+    .replace(/^(probable|questionable|doubtful|out|injured reserve|ir|pup|suspended|covid(?:-19)?|non-football injury|nfi)\b\s*[—\-:]?\s*/i, '')
+    .replace(new RegExp('^' + code + '\\b\\s*[—\\-:]?\\s*', 'i'), '')
+    .trim();
+  if (!body || body.toUpperCase() === code) return meaning;
+  return `${meaning} (${body})`;
+}
+function injBadge(p) {
+  if (!p.inj) return '';
+  return ` <span class="inj" tabindex="0" data-tip="${injTipText(p).replace(/"/g, '&quot;')}">${p.inj}</span>`;
+}
+let injTipEl = null;
+function ensureInjTip() {
+  if (!injTipEl) {
+    injTipEl = document.createElement('div');
+    injTipEl.className = 'inj-tip';
+    injTipEl.setAttribute('role', 'tooltip');
+    document.body.appendChild(injTipEl);
+  }
+  return injTipEl;
+}
+function showInjTip(el) {
+  const tip = ensureInjTip();
+  tip.textContent = el.dataset.tip || '';
+  tip.classList.add('show');
+  const r = el.getBoundingClientRect();
+  // measure after show so size is known
+  const tw = tip.offsetWidth, th = tip.offsetHeight;
+  let left = r.left + r.width / 2 - tw / 2;
+  left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+  let top = r.top - th - 10;
+  if (top < 8) top = r.bottom + 10;
+  tip.style.left = `${left}px`;
+  tip.style.top = `${top}px`;
+}
+function hideInjTip() {
+  if (injTipEl) injTipEl.classList.remove('show');
+}
+function bindInjTips() {
+  document.querySelectorAll('#pool .inj').forEach(el => {
+    el.onmouseenter = e => { e.stopPropagation(); showInjTip(el); };
+    el.onmouseleave = () => hideInjTip();
+    el.onfocus = () => showInjTip(el);
+    el.onblur = () => hideInjTip();
+  });
+}
+
+function cellVal(v) {
+  if (v == null || v === '') return 0;
+  return v;
+}
+
+// Green = good, red = bad (Sleeper-style). Level 5 elite … 1 poor.
+// Normal cuts: [elite, good, avg, poor] — value >= tier. Inverse: lower is better.
+const HEAT_PPR = {
+  QB:  [28, 22, 16, 10],
+  RB:  [25, 18, 12, 7],
+  WR:  [22, 15, 10, 6],
+  TE:  [18, 12, 8, 4],
+  K:   [14, 10, 7, 4],
+  DST: [14, 9, 5, 2],
+};
+const HEAT_STAT = {
+  CMP: [28, 22, 18, 12],
+  ATT: [40, 32, 25, 18],
+  PYD: [320, 260, 200, 140],
+  PTD: [4, 3, 2, 1],
+  CAR: [22, 16, 10, 5],
+  RYD: [100, 70, 40, 20],
+  RTD: [2, 1],
+  REC: [9, 6, 4, 2],
+  YDS: [120, 80, 50, 25],
+  TD:  [2, 1],
+  TAR: [12, 8, 5, 3],
+  FGM: [4, 3, 2, 1],
+  FGA: [4, 3, 2, 1],
+  XPM: [4, 3, 2, 1],
+  XPA: [4, 3, 2, 1],
+  SACK:[5, 3, 2, 1],
+  FR:  [2, 1],
+  FF:  [2, 1],
+  INT: { inv: true, cuts: [0, 1, 2] },
+  FUM: { inv: true, cuts: [0, 1, 2] },
+  PA:  { inv: true, cuts: [10, 17, 24, 31] },
+};
+
+function heatLevel(col, value, pos) {
+  if (value == null || value === '' || Number.isNaN(Number(value))) return null;
+  const n = Number(value);
+  let spec = (col === 'PPR' || col === 'MVP') ? HEAT_PPR[pos] : HEAT_STAT[col];
+  if (!spec) return null;
+
+  if (spec.inv) {
+    const cuts = spec.cuts;
+    // 0 ints/fumbles = best green; climbing toward red
+    if (n <= cuts[0]) return 5;
+    if (cuts.length > 1 && n <= cuts[1]) return 3;
+    if (cuts.length > 2 && n <= cuts[2]) return 2;
+    return 1;
+  }
+
+  const cuts = spec;
+  if (n >= cuts[0]) return 5;
+  if (cuts.length > 1 && n >= cuts[1]) return 4;
+  if (cuts.length > 2 && n >= cuts[2]) return 3;
+  if (cuts.length > 3 && n >= cuts[3]) return 2;
+  // 1 TD with only [2,1] thresholds: handled by cuts[1]
+  // 0 for counting stats that include 0 as poor floor
+  if (cuts.length === 2) return n > 0 ? 3 : 1;
+  return 1;
+}
+function heatCell(col, value, pos) {
+  const display = cellVal(value);
+  const lvl = heatLevel(col, value, pos);
+  const cls = ['heat', lvl ? `h${lvl}` : '', col === 'PPR' ? 'pts' : '', col === 'MVP' ? 'mvppts' : '']
+    .filter(Boolean).join(' ');
+  return `<td class="${cls}">${display}</td>`;
+}
+
+function closeGameLog() {
+  const bd = $('#gl-backdrop');
+  bd.classList.remove('show');
+  bd.setAttribute('aria-hidden', 'true');
+}
+async function openGameLog(playerId) {
+  const p = byId(playerId);
+  if (!p) return;
+  hideInjTip();
+  const bd = $('#gl-backdrop');
+  const mvpMode = isMvpMode();
+  const pos = p.pos;
+  $('#gl-avatar').src = p.img || 'https://sleepercdn.com/images/v2/icons/player_default.webp';
+  $('#gl-title').textContent = displayName(p);
+  $('#gl-meta').textContent = `${p.team} · ${p.pos}`;
+  $('#gl-note').textContent = 'Sleeper full-PPR game log';
+  $('#gl-body').innerHTML = '<div class="gl-empty">Loading…</div>';
+  bd.classList.add('show');
+  bd.setAttribute('aria-hidden', 'false');
+  try {
+    const r = await fetch('/api/gamelog?id=' + encodeURIComponent(playerId));
+    const d = await r.json();
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Failed to load');
+    const cols = d.columns || [];
+    if (!(d.rows || []).length) {
+      $('#gl-body').innerHTML = '<div class="gl-empty">No games played yet this season.</div>';
+      return;
+    }
+    const head = `<tr>
+      <th>WK</th><th>OPP</th>
+      ${cols.map(c => `<th>${c}</th>`).join('')}
+      <th>PPR</th>
+      ${mvpMode ? '<th>MVP</th>' : ''}
+    </tr>`;
+    const body = d.rows.map(row => {
+      if (row.bye) {
+        const span = 2 + cols.length + 1 + (mvpMode ? 1 : 0);
+        return `<tr class="bye"><td>${row.week}</td><td colspan="${span - 1}">BYE</td></tr>`;
+      }
+      const mvpPts = row.pts == null ? null : Math.round(Number(row.pts) * 1.5 * 10) / 10;
+      const oppCell = row.dnp
+        ? `${row.opp || '—'} <span class="dnp-tag">DNP</span>`
+        : (row.opp || '—');
+      // DNP zeros shouldn't scream red — keep muted, no heat
+      if (row.dnp) {
+        return `<tr class="dnp">
+          <td>${row.week}</td>
+          <td>${oppCell}</td>
+          ${cols.map(c => `<td>${cellVal(row.cells && row.cells[c])}</td>`).join('')}
+          <td class="pts">${cellVal(row.pts)}</td>
+          ${mvpMode ? `<td class="mvppts">${cellVal(mvpPts)}</td>` : ''}
+        </tr>`;
+      }
+      return `<tr>
+        <td>${row.week}</td>
+        <td>${oppCell}</td>
+        ${cols.map(c => heatCell(c, row.cells && row.cells[c], pos)).join('')}
+        ${heatCell('PPR', row.pts, pos)}
+        ${mvpMode ? heatCell('MVP', mvpPts, pos) : ''}
+      </tr>`;
+    }).join('');
+    $('#gl-body').innerHTML = `<table class="gl-table"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  } catch (err) {
+    $('#gl-body').innerHTML = `<div class="gl-empty">${err.message || 'Could not load game log'}</div>`;
+  }
+}
+function bindGameLogLinks() {
+  document.querySelectorAll('#pool [data-gl]').forEach(el => {
+    el.onclick = e => {
+      e.stopPropagation();
+      openGameLog(el.dataset.gl);
+    };
+  });
+}
 
 function visiblePlayers() {
   const q = filterSearch.trim().toLowerCase();
@@ -498,7 +771,7 @@ function sync() {
   const ok = !locked && name && emailOk && full && rem >= 0;
   $('#go').disabled = !ok;
   let why = '';
-  if (locked) why = 'Entries locked — kickoff was 8:15pm ET';
+  if (locked) why = 'Entries locked — kickoff was 8:15pm ET Thursday';
   else if (!ok) {
     if (!name) why = 'Enter your name';
     else if (!emailOk) why = 'Enter a valid email';
@@ -538,7 +811,7 @@ function renderPool() {
     }
     const cls = locked ? 'locked' : (inActive ? 'on' : '');
     return `<tr class="${cls}" data-id="${p.id}" data-locked="${locked ? '1' : '0'}">
-      <td><div class="pname">${avatar(p)}<span class="meta"><span class="nm">${displayName(p)}${p.inj ? ` <span style="color:#ff6b6b;font-size:.75rem" title="${(p.inj_detail || p.inj).replace(/"/g, '&quot;')}">${p.inj}</span>` : ''}</span>${note ? `<span class="note">${note}</span>` : ''}</span></div></td>
+      <td><div class="pname">${avatarLink(p)}<span class="meta"><span class="nm"><span class="plink" data-gl="${p.id}" title="View game log">${displayName(p)}</span>${injBadge(p)}</span>${note ? `<span class="note">${note}</span>` : ''}</span></div></td>
       <td><span class="team ${p.team}">${p.team}</span></td>
       <td>${p.pos}</td>
       <td class="proj" title="Sleeper full PPR projection${mvpMode ? ' × 1.5 for MVP' : ''}">${formatProj(p)}</td>
@@ -567,6 +840,8 @@ function renderPool() {
       else addPlayer(id);
     };
   });
+  bindInjTips();
+  bindGameLogLinks();
 }
 
 $('#mode-mvp').onclick = () => selectSlot('mvp');
@@ -668,6 +943,12 @@ $('#go').onclick = async () => {
   $('#msg').textContent = '';
   showEntry(j.entry, j.emailed, j.updated);
 };
+
+$('#gl-close').onclick = closeGameLog;
+$('#gl-backdrop').onclick = e => { if (e.target === $('#gl-backdrop')) closeGameLog(); };
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('#gl-backdrop').classList.contains('show')) closeGameLog();
+});
 
 $('#lookup-btn').onclick = async () => {
   const email = $('#lookup-email').value.trim();
