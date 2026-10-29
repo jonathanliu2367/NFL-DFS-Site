@@ -1,6 +1,6 @@
 FROM python:3.12-slim
 WORKDIR /app
-COPY server.py index.html players.csv player_images.json leaderboard.html score.py scores.json ./
+COPY server.py index.html classic.js players.csv player_images.json leaderboard.html score.py scores.json ./
 # Seed empty lineups if missing; runtime DATA_DIR may override path
 COPY data.json ./data.json
 ENV PORT=8080

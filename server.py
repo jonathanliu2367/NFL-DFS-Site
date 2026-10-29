@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""TNF DFS Showdown — 1 MVP (1.5x sal/pts) + 5 FLEX. python3 server.py → :8766"""
+"""NFL DFS Classic — QB/2RB/3WR/TE/FLEX/DST · $60k · late swap. python3 server.py → :8766"""
 import csv, json, os, re, smtplib, ssl, subprocess, threading, time, uuid, urllib.request
 from datetime import datetime, timezone
 from email.message import EmailMessage
@@ -9,28 +9,68 @@ from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).parent
-# Cloud hosts: set DATA_DIR to a persistent volume so lineups survive restarts
 DATA_DIR = Path(os.environ.get("DATA_DIR", str(ROOT)))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 DATA = DATA_DIR / "data.json"
+SEED_DATA = ROOT / "data.json"
+
+
+def ensure_data_seeded():
+    """If the volume has no lineups, seed from the image-bundled data.json."""
+    seed_text = SEED_DATA.read_text() if SEED_DATA.exists() else ""
+    try:
+        seed = json.loads(seed_text) if seed_text else {}
+    except Exception:
+        seed = {}
+    seed_n = len(seed.get("lineups") or [])
+    if seed_n == 0:
+        return
+    need_seed = not DATA.exists()
+    if not need_seed:
+        try:
+            cur = json.loads(DATA.read_text())
+            need_seed = len(cur.get("lineups") or []) == 0
+        except Exception:
+            need_seed = True
+    if need_seed:
+        DATA.write_text(json.dumps(seed, indent=2))
+        print(f"Seeded {seed_n} lineups into {DATA}")
+
+
+ensure_data_seeded()
 CSV = ROOT / "players.csv"
 IMGS = ROOT / "player_images.json"
 CAP = 60000
-FLEX_N = 5
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 SLEEPER_THUMB_RE = re.compile(r"/players/thumb/(\d+)\.(?:jpg|png|webp)", re.I)
 ET = ZoneInfo("America/New_York")
-# Falcons @ Packers kickoff — entries lock at this time
-LOCK_AT = datetime(2026, 9, 24, 20, 15, tzinfo=ET)
+# First Sunday kickoff — slate lock / late-swap starts here
+LOCK_AT = datetime(2026, 11, 1, 13, 0, tzinfo=ET)
 DEFAULT_IMG = "https://sleepercdn.com/images/v2/icons/player_default.webp"
-INJURY_POLL_SEC = int(os.environ.get("INJURY_POLL_SEC", "300"))  # 5 minutes
-STATS_POLL_SEC = int(os.environ.get("STATS_POLL_SEC", "60"))  # live scoring
+INJURY_POLL_SEC = int(os.environ.get("INJURY_POLL_SEC", "300"))
+STATS_POLL_SEC = int(os.environ.get("STATS_POLL_SEC", "60"))
 SLEEPER_PLAYERS_URL = "https://api.sleeper.app/v1/players/nfl"
 ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "")
-MATCHUP = os.environ.get("MATCHUP", "Falcons @ Packers")
+MATCHUP = os.environ.get("MATCHUP", "Week 8 Sunday")
+CONTEST_SEASON = os.environ.get("CONTEST_SEASON", "2026")
+CONTEST_WEEK = int(os.environ.get("CONTEST_WEEK", "8"))
+CONTEST_ID = os.environ.get("CONTEST_ID", f"{CONTEST_SEASON}-w{CONTEST_WEEK}-sun")
 SCORES_FILE = ROOT / "scores.json"
 
-# FanDuel-style short codes from Sleeper injury_status
+# Classic FanDuel-style roster
+SLOT_ORDER = ["QB", "RB1", "RB2", "WR1", "WR2", "WR3", "TE", "FLEX", "DST"]
+SLOT_ELIGIBLE = {
+    "QB": ("QB",),
+    "RB1": ("RB",),
+    "RB2": ("RB",),
+    "WR1": ("WR",),
+    "WR2": ("WR",),
+    "WR3": ("WR",),
+    "TE": ("TE",),
+    "FLEX": ("RB", "WR", "TE"),
+    "DST": ("DST",),
+}
+
 INJ_MAP = {
     "probable": "P",
     "questionable": "Q",
@@ -54,14 +94,135 @@ injuries_updated_at = None
 projections_updated_at = None
 scores_updated_at = None
 sleeper_lock = threading.Lock()
-# Week/season from Sleeper state (updated each poll)
-sleeper_season = None
-sleeper_week = None
-# Short-lived caches
+sleeper_season = str(CONTEST_SEASON)
+sleeper_week = int(CONTEST_WEEK)
 _gamelog_cache = {}
-_schedule_cache = {}  # season -> (fetched_at, data)
+_schedule_cache = {}
 GAMELOG_TTL_SEC = 300
 SCHEDULE_TTL_SEC = 1800
+ESPN_SCOREBOARD_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
+ESPN_TTL_SEC = 30
+_espn_cache = {"at": 0.0, "games": [], "by_team": {}}
+# FanDuel/CSV ↔ ESPN abbreviations
+TEAM_TO_ESPN = {"JAC": "JAX", "WAS": "WSH"}
+ESPN_TO_FD = {"JAX": "JAC", "WSH": "WAS"}
+
+
+def norm_espn_team(t):
+    t = (t or "").strip().upper()
+    return TEAM_TO_ESPN.get(t, t)
+
+
+def display_team(t):
+    """Show FanDuel-style abbrev on the site."""
+    t = (t or "").strip().upper()
+    t = TEAM_TO_ESPN.get(t, t)
+    return ESPN_TO_FD.get(t, t)
+
+
+def game_status_label(state, period, clock, short_detail):
+    state = (state or "pre").lower()
+    if state == "post":
+        return "Final"
+    if state == "in":
+        sd = (short_detail or "").strip()
+        if sd and "Final" not in sd:
+            return sd
+        try:
+            p = int(period or 0)
+        except (TypeError, ValueError):
+            p = 0
+        if p <= 0:
+            q = "Live"
+        elif p <= 4:
+            q = f"Q{p}"
+        elif p == 5:
+            q = "OT"
+        else:
+            q = f"OT{p - 4}"
+        clock = (clock or "").strip()
+        return f"{q} {clock}".strip() if clock else q
+    sd = (short_detail or "").strip()
+    if " - " in sd:
+        return sd.split(" - ", 1)[1].replace(" EDT", "").replace(" EST", "").strip()
+    return sd or "Upcoming"
+
+
+def game_score_line(away, home, away_score, home_score, state):
+    a, h = display_team(away), display_team(home)
+    if (state or "").lower() == "pre":
+        return f"{a} @ {h}"
+    return f"{a} {away_score} @ {h} {home_score}"
+
+
+def refresh_espn_scoreboard(force=False):
+    """Live NFL scores from ESPN public scoreboard (free, no key)."""
+    now = time.time()
+    if (
+        not force
+        and _espn_cache["games"]
+        and now - _espn_cache["at"] < ESPN_TTL_SEC
+    ):
+        return _espn_cache
+    date = LOCK_AT.strftime("%Y%m%d")
+    data = fetch_json(f"{ESPN_SCOREBOARD_URL}?dates={date}", timeout=20)
+    games = []
+    by_team = {}
+    for e in (data or {}).get("events") or []:
+        comps = e.get("competitions") or []
+        if not comps:
+            continue
+        c = comps[0]
+        st = c.get("status") or {}
+        t = st.get("type") or {}
+        aw = ho = None
+        for x in c.get("competitors") or []:
+            if x.get("homeAway") == "away":
+                aw = x
+            elif x.get("homeAway") == "home":
+                ho = x
+        if not aw or not ho:
+            continue
+        away = norm_espn_team((aw.get("team") or {}).get("abbreviation"))
+        home = norm_espn_team((ho.get("team") or {}).get("abbreviation"))
+        state = (t.get("state") or "pre").lower()
+        try:
+            away_score = int(float(aw.get("score") or 0))
+            home_score = int(float(ho.get("score") or 0))
+        except (TypeError, ValueError):
+            away_score = home_score = 0
+        short = t.get("shortDetail") or t.get("detail") or ""
+        status = game_status_label(state, st.get("period"), st.get("displayClock"), short)
+        line = game_score_line(away, home, away_score, home_score, state)
+        g = {
+            "id": str(e.get("id") or f"{away}@{home}"),
+            "away": display_team(away),
+            "home": display_team(home),
+            "away_score": None if state == "pre" else away_score,
+            "home_score": None if state == "pre" else home_score,
+            "state": state,  # pre | in | post
+            "period": st.get("period") or 0,
+            "clock": st.get("displayClock") or "",
+            "status": status,
+            "line": line,
+            "label": f"{line} · {status}",
+        }
+        games.append(g)
+        for key in (away, home, display_team(away), display_team(home)):
+            if key:
+                by_team[key] = g
+    order = {"in": 0, "post": 1, "pre": 2}
+    games.sort(key=lambda g: (order.get(g["state"], 9), g["away"], g["home"]))
+    _espn_cache["at"] = now
+    _espn_cache["games"] = games
+    _espn_cache["by_team"] = by_team
+    return _espn_cache
+
+
+def game_for_team(team):
+    cache = refresh_espn_scoreboard()
+    t = (team or "").strip().upper()
+    return cache["by_team"].get(t) or cache["by_team"].get(norm_espn_team(t))
 
 
 def fmt_stat(v):
@@ -299,20 +460,51 @@ def fetch_player_gamelog(sleeper_id, season):
 
 
 
+
 def now_et():
     return datetime.now(ET)
 
 
+def parse_kickoff(raw):
+    if not raw:
+        return None
+    s = str(raw).strip()
+    if not s:
+        return None
+    try:
+        if s.endswith("Z"):
+            dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        else:
+            dt = datetime.fromisoformat(s)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=ET)
+        return dt.astimezone(ET)
+    except Exception:
+        return None
+
+
 def is_locked():
+    """True once the first Sunday game has kicked off."""
     return now_et() >= LOCK_AT
+
+
+def player_game_started(p, at=None):
+    at = at or now_et()
+    ko = p.get("kickoff_dt")
+    if ko is None:
+        return is_locked()
+    return at >= ko
 
 
 def lock_info():
     return {
         "lock_at": LOCK_AT.isoformat(),
-        "lock_at_label": "Thu 9/24 8:15pm ET",
+        "lock_at_label": "Sun 11/1 1:00pm ET (first kickoff)",
         "locked": is_locked(),
+        "late_swap": is_locked(),
         "server_now": now_et().isoformat(),
+        "format": "classic",
+        "slots": SLOT_ORDER,
     }
 
 
@@ -342,7 +534,7 @@ def load_players():
     with CSV.open() as f:
         for r in csv.DictReader(f):
             pid = r["Id"].split("-")[-1]
-            sal = int(r["Salary"])
+            sal = int(float(r["Salary"]))
             pos = r["Position"].strip()
             name = r["Nickname"].strip()
             if pos == "D":
@@ -354,38 +546,61 @@ def load_players():
             csv_detail = (r.get("Injury Details") or "").strip()
             if pos == "DST":
                 sleeper_id = r["Team"].strip().upper()
+                if sleeper_id == "JAC":
+                    sleeper_id = "JAX"
             else:
                 sleeper_id = sleeper_id_from_img(img)
+            ko_raw = (r.get("Kickoff") or "").strip()
+            ko_dt = parse_kickoff(ko_raw)
             out.append({
                 "id": pid,
                 "name": name,
                 "pos": pos,
                 "team": r["Team"].strip(),
+                "opp": (r.get("Opponent") or "").strip(),
+                "game": (r.get("Game") or "").strip(),
                 "salary": sal,
-                "mvp_salary": int(r.get("MVP 1.5x Salary") or round(sal * 1.5)),
+                "kickoff": ko_dt.isoformat() if ko_dt else ko_raw,
+                "kickoff_dt": ko_dt,
                 "inj": csv_inj,
                 "inj_detail": f"{csv_inj} — {csv_detail}".strip(" —") if csv_inj or csv_detail else "",
                 "img": img,
                 "sleeper_id": sleeper_id,
-                "proj": None,  # Sleeper full-PPR weekly projection
-                "live_pts": None,  # Sleeper full-PPR actuals (live)
+                "proj": None,
+                "live_pts": None,
             })
     out.sort(key=lambda p: (-p["salary"], p["name"]))
     return out
 
 
+def annotate_game_started(players, at=None):
+    """Attach game_started flag + live proj for API payloads (copies, not source)."""
+    at = at or now_et()
+    out = []
+    for p in players:
+        d = {k: v for k, v in p.items() if k != "kickoff_dt"}
+        d["game_started"] = player_game_started(p, at)
+        d["proj"] = live_player_proj(p["id"])
+        out.append(d)
+    return out
+
+
 def fetch_json(url, timeout=60):
-    """HTTP GET JSON. Prefer urllib; fall back to curl (macOS SSL)."""
+    ua = "Mozilla/5.0 (compatible; nfl-dfs-scoreboard/1.0)"
     try:
         ctx = ssl.create_default_context()
-        req = urllib.request.Request(url, headers={"User-Agent": "tnf-dfs-sleeper-poll/1.0"})
+        req = urllib.request.Request(url, headers={"User-Agent": ua})
         with urllib.request.urlopen(req, timeout=timeout, context=ctx) as resp:
             return json.loads(resp.read().decode())
     except Exception as ex:
-        print("urllib fetch failed:", url, ex, "— trying curl")
+        print("urllib fetch failed:", url, ex, "- trying curl")
         try:
             raw = subprocess.check_output(
-                ["curl", "-fsSL", "--max-time", str(timeout), url],
+                [
+                    "curl", "-fsSL", "--max-time", str(timeout),
+                    "-H", f"User-Agent: {ua}",
+                    url,
+                ],
                 stderr=subprocess.STDOUT,
             )
             return json.loads(raw.decode())
@@ -413,7 +628,6 @@ def sleeper_projections_url(season, week):
 
 
 def refresh_injuries_from_sleeper():
-    """Update in-memory player injury badges from Sleeper. Safe to call repeatedly."""
     global injuries_updated_at
     data = fetch_sleeper_players()
     if not data:
@@ -432,7 +646,6 @@ def refresh_injuries_from_sleeper():
                 sp.get("injury_body_part"),
                 sp.get("injury_notes"),
             )
-            # Also surface IR / inactive-ish roster status
             status = (sp.get("status") or "").strip()
             if not code and status.lower() in ("injured reserve", "pup", "suspended"):
                 code, detail = format_inj(status, sp.get("injury_body_part"), sp.get("injury_notes"))
@@ -445,17 +658,13 @@ def refresh_injuries_from_sleeper():
     return True
 
 
+def contest_season_week():
+    return str(CONTEST_SEASON), int(CONTEST_WEEK)
+
+
 def refresh_projections_from_sleeper():
-    """Update in-memory full-PPR weekly projections from Sleeper."""
     global projections_updated_at, sleeper_season, sleeper_week
-    state = sleeper_nfl_state()
-    if not state:
-        return False
-    season = state.get("season") or state.get("league_season")
-    week = state.get("display_week") or state.get("week")
-    if season is None or week is None:
-        print("Sleeper state missing season/week:", state)
-        return False
+    season, week = contest_season_week()
     data = fetch_json(sleeper_projections_url(season, week), timeout=90)
     if not data or not isinstance(data, list):
         return False
@@ -479,9 +688,10 @@ def refresh_projections_from_sleeper():
         for p in PLAYERS:
             sid = str(p.get("sleeper_id") or "")
             pts = by_id.get(sid) if sid else None
-            # Team DEF projections are keyed by team abbrev (BUF, DET, …)
             if pts is None and p.get("pos") == "DST":
-                pts = by_id.get(p.get("team") or "")
+                pts = by_id.get(p.get("team") or "") or by_id.get(
+                    {"JAC": "JAX"}.get(p.get("team"), p.get("team") or "")
+                )
             if p.get("proj") != pts:
                 p["proj"] = pts
                 changed += 1
@@ -504,7 +714,6 @@ def sleeper_stats_url(season, week):
 
 
 def seed_live_scores_from_file():
-    """Boot with last known scores.json so leaderboard works before first poll."""
     global scores_updated_at
     if not SCORES_FILE.exists():
         return
@@ -529,9 +738,14 @@ def seed_live_scores_from_file():
 
 
 def persist_live_scores():
-    """Write current live_pts back to scores.json (best-effort)."""
     try:
-        out = {"_how": f"Sleeper full-PPR live · week {sleeper_week} {sleeper_season}"}
+        season, week = contest_season_week()
+        out = {
+            "_how": f"Sleeper full-PPR · week {week} {season} · contest {CONTEST_ID}",
+            "_contest_id": CONTEST_ID,
+            "_season": season,
+            "_week": week,
+        }
         with sleeper_lock:
             for p in PLAYERS:
                 pts = p.get("live_pts")
@@ -544,15 +758,8 @@ def persist_live_scores():
 
 
 def refresh_live_scores_from_sleeper():
-    """Pull week PPR actuals from Sleeper into player.live_pts."""
     global scores_updated_at, sleeper_season, sleeper_week
-    state = sleeper_nfl_state()
-    if not state:
-        return False
-    season = state.get("season") or state.get("league_season")
-    week = state.get("display_week") or state.get("week")
-    if season is None or week is None:
-        return False
+    season, week = contest_season_week()
     data = fetch_json(sleeper_stats_url(season, week), timeout=90)
     if not data or not isinstance(data, list):
         return False
@@ -577,9 +784,9 @@ def refresh_live_scores_from_sleeper():
             sid = str(p.get("sleeper_id") or "")
             pts = by_id.get(sid) if sid else None
             if pts is None and p.get("pos") == "DST":
-                pts = by_id.get(p.get("team") or "")
+                team = p.get("team") or ""
+                pts = by_id.get(team) or by_id.get({"JAC": "JAX"}.get(team, team))
             if pts is None:
-                # Keep prior live_pts if Sleeper omitted a zero/inactive row
                 continue
             if p.get("live_pts") != pts:
                 p["live_pts"] = pts
@@ -595,7 +802,6 @@ def refresh_live_scores_from_sleeper():
 
 
 def current_scores_map():
-    """FanDuel id → live PPR pts (0 if unknown)."""
     with sleeper_lock:
         return {
             p["id"]: float(p["live_pts"]) if p.get("live_pts") is not None else 0.0
@@ -603,56 +809,68 @@ def current_scores_map():
         }
 
 
+def entry_ids(entry):
+    lu = entry.get("lineup") or {}
+    if lu:
+        return [lu.get(s) for s in SLOT_ORDER]
+    # legacy showdown → ignore
+    return []
+
+
 def ownership_for(lineups):
     n = len(lineups) or 1
-    own, mvp = {}, {}
+    own = {}
     for e in lineups:
-        mid = e.get("mvp")
-        if mid:
-            mvp[mid] = mvp.get(mid, 0) + 1
-            own[mid] = own.get(mid, 0) + 1
-        for pid in e.get("flex") or []:
-            own[pid] = own.get(pid, 0) + 1
-    out = {}
-    for pid in set(own) | set(mvp):
-        o = own.get(pid, 0)
-        m = mvp.get(pid, 0)
-        out[pid] = {
-            "own_pct": round(100.0 * o / n, 1),
-            "mvp_pct": round(100.0 * m / n, 1),
-        }
-    return out
+        for pid in entry_ids(e):
+            if pid:
+                own[pid] = own.get(pid, 0) + 1
+    return {
+        pid: {"own_pct": round(100.0 * c / n, 1)}
+        for pid, c in own.items()
+    }
+
+
+def revealed_own_pct(pid, own_stats):
+    """Ownership only after that player's game has kicked off."""
+    pl = BY.get(pid) or {}
+    if not pl or not player_game_started(pl):
+        return None
+    st = own_stats.get(pid) or {}
+    return st.get("own_pct", 0.0)
 
 
 def score_entry_rows(entry, scores, own_stats):
     rows = []
     total = 0.0
-    mvp = entry.get("mvp")
-    if mvp:
-        base = float(scores.get(mvp, 0))
-        pts = round(base * 1.5, 2)
-        total += pts
-        pl = BY.get(mvp) or {}
-        st = own_stats.get(mvp) or {}
-        rows.append({
-            "slot": "MVP",
-            "id": mvp,
-            "name": pl.get("name", mvp),
-            "img": pl.get("img") or DEFAULT_IMG,
-            "sal": int(pl.get("mvp_salary") or 0),
-            "base": base,
-            "mult": 1.5,
-            "pts": pts,
-            "own_pct": st.get("own_pct", 0),
-            "mvp_pct": st.get("mvp_pct", 0),
-        })
-    for i, pid in enumerate(entry.get("flex") or [], 1):
+    lu = entry.get("lineup") or {}
+    for slot in SLOT_ORDER:
+        pid = lu.get(slot)
+        if not pid:
+            continue
         base = float(scores.get(pid, 0))
         total += base
         pl = BY.get(pid) or {}
-        st = own_stats.get(pid) or {}
+        started = player_game_started(pl) if pl else False
+        # Don't leak yet-to-play names / salary / own% / proj (late-swap integrity)
+        if not started:
+            rows.append({
+                "slot": slot,
+                "id": None,
+                "name": "Player's game hasn't started yet",
+                "img": DEFAULT_IMG,
+                "sal": None,
+                "base": 0.0,
+                "mult": 1.0,
+                "pts": 0.0,
+                "proj": None,
+                "own_pct": None,
+                "game_started": False,
+                "hidden": True,
+            })
+            continue
+        g = game_for_team(pl.get("team"))
         rows.append({
-            "slot": f"FLEX {i}",
+            "slot": slot,
             "id": pid,
             "name": pl.get("name", pid),
             "img": pl.get("img") or DEFAULT_IMG,
@@ -660,58 +878,137 @@ def score_entry_rows(entry, scores, own_stats):
             "base": base,
             "mult": 1.0,
             "pts": round(base, 2),
-            "own_pct": st.get("own_pct", 0),
-            "mvp_pct": st.get("mvp_pct", 0),
+            "proj": live_player_proj(pid, base, g),
+            "own_pct": revealed_own_pct(pid, own_stats),
+            "game_started": True,
+            "hidden": False,
+            "team": pl.get("team"),
+            "pos": pl.get("pos"),
+            "game": g,
+            "game_label": (g or {}).get("label"),
         })
     return round(total, 2), rows
 
 
-def compute_perfect(scores):
-    from itertools import combinations
+def entry_progress(rows):
+    """Roster chrome: playing = in progress only; to go = not started.
 
-    pool = [
-        {
-            "id": p["id"],
-            "pts": float(scores.get(p["id"], 0)),
-            "sal": int(p["salary"]),
-            "mvp_sal": int(p["mvp_salary"]),
-        }
-        for p in PLAYERS
-        if float(scores.get(p["id"], 0)) > 0
-    ]
-    best = None
-    for combo in combinations(range(len(pool)), 6):
-        for mvp_i in combo:
-            sal = pool[mvp_i]["mvp_sal"] + sum(
-                pool[i]["sal"] for i in combo if i != mvp_i
-            )
-            if sal > CAP:
-                continue
-            total = sum(pool[i]["pts"] for i in combo) + 0.5 * pool[mvp_i]["pts"]
-            if best is None or total > best[0]:
-                flex = sorted(
-                    (pool[i]["id"] for i in combo if i != mvp_i),
-                    key=lambda pid: -scores.get(pid, 0),
-                )
-                best = (round(total, 2), pool[mvp_i]["id"], flex, sal)
-    if not best:
+    Finished games count in neither — so a fully done lineup shows
+    \"0 playing · 0 to go\".
+    """
+    playing = yet_to_go = 0
+    for r in rows:
+        if r.get("hidden") or not r.get("game_started"):
+            yet_to_go += 1
+            continue
+        state = ((r.get("game") or {}).get("state") or "").lower()
+        if state == "in":
+            playing += 1
+        # state == "post" (or unknown-but-started) → neither bucket
+    return {
+        "playing": playing,
+        "yet_to_go": yet_to_go,
+    }
+
+
+def entry_proj_total(rows):
+    """Lineup live proj only when every slot is revealed."""
+    if any(r.get("hidden") or not r.get("game_started") for r in rows):
         return None
-    total, mvp, flex, sal = best
-    return {"name": "Perfect Lineup", "mvp": mvp, "flex": flex, "salary": sal, "total": total}
+    total = 0.0
+    for r in rows:
+        pj = r.get("proj")
+        if pj is None and r.get("id"):
+            pj = live_player_proj(r["id"])
+        total += float(pj or 0)
+    return round(total, 2)
+
+
+def compute_perfect(scores):
+    """Best-effort classic perfect lineup (greedy by points, salary-aware)."""
+    by_pos = {"QB": [], "RB": [], "WR": [], "TE": [], "DST": []}
+    for p in PLAYERS:
+        pts = float(scores.get(p["id"], 0))
+        if pts <= 0:
+            continue
+        if p["pos"] in by_pos:
+            by_pos[p["pos"]].append({"id": p["id"], "pts": pts, "sal": int(p["salary"])})
+    for pos in by_pos:
+        by_pos[pos].sort(key=lambda x: (-x["pts"], x["sal"]))
+
+    lineup, used, sal_used, total = {}, set(), 0, 0.0
+    # Fill fixed slots first, FLEX last
+    order = ["QB", "DST", "RB1", "RB2", "WR1", "WR2", "WR3", "TE", "FLEX"]
+    for slot in order:
+        best = None
+        for pos in SLOT_ELIGIBLE[slot]:
+            for c in by_pos.get(pos) or []:
+                if c["id"] in used:
+                    continue
+                if sal_used + c["sal"] > CAP:
+                    continue
+                if best is None or c["pts"] > best["pts"] or (
+                    c["pts"] == best["pts"] and c["sal"] < best["sal"]
+                ):
+                    best = c
+        if not best:
+            return None
+        lineup[slot] = best["id"]
+        used.add(best["id"])
+        sal_used += best["sal"]
+        total += best["pts"]
+    return {
+        "name": "Perfect Lineup",
+        "lineup": {s: lineup[s] for s in SLOT_ORDER},
+        "salary": sal_used,
+        "total": round(total, 2),
+    }
 
 
 def build_leaderboard_payload():
+    season, week = contest_season_week()
+    locked = is_locked()
+    if not locked:
+        return {
+            "ok": True,
+            "available": False,
+            "live": False,
+            "matchup": MATCHUP,
+            "entries": [],
+            "pool": [],
+            "games": [],
+            "perfect": None,
+            "scores_updated_at": None,
+            "sleeper_season": season,
+            "sleeper_week": week,
+            "contest_id": CONTEST_ID,
+            "poll_sec": STATS_POLL_SEC,
+            "message": f"Leaderboard opens at first kickoff ({lock_info()['lock_at_label']}).",
+            **lock_info(),
+        }
+
     scores = current_scores_map()
+    try:
+        refresh_espn_scoreboard()
+    except Exception as ex:
+        print("espn scoreboard error:", ex)
     lineups = load().get("lineups") or []
     own_stats = ownership_for(lineups)
     ranked = []
     for e in lineups:
         total, rows = score_entry_rows(e, scores, own_stats)
+        # Hide lineup total while any slot is mystery; keep salaries on revealed players
+        has_hidden = any(r.get("hidden") for r in rows)
+        progress = entry_progress(rows)
         ranked.append({
             "id": e.get("id") or e.get("email") or e.get("name"),
             "name": e.get("name") or "?",
-            "salary": e.get("salary") or 0,
+            "salary": None if has_hidden else (e.get("salary") or 0),
+            "salary_hidden": has_hidden,
             "total": total,
+            "proj_total": entry_proj_total(rows),
+            "playing": progress["playing"],
+            "yet_to_go": progress["yet_to_go"],
             "rows": rows,
         })
     ranked.sort(key=lambda x: -x["total"])
@@ -720,45 +1017,63 @@ def build_leaderboard_payload():
         e["medal"] = {1: "🥇", 2: "🥈", 3: "🥉"}.get(i, f"#{i}")
 
     perfect = None
-    p_entry = compute_perfect(scores)
-    if p_entry:
-        p_total, p_rows = score_entry_rows(p_entry, scores, own_stats)
-        perfect = {
-            "id": "perfect",
-            "name": "Perfect Lineup",
-            "salary": p_entry["salary"],
-            "total": p_total,
-            "medal": "👑",
-            "rows": p_rows,
-        }
+    if any(v > 0 for v in scores.values()):
+        p_entry = compute_perfect(scores)
+        if p_entry:
+            p_total, p_rows = score_entry_rows(p_entry, scores, own_stats)
+            p_hidden = any(r.get("hidden") for r in p_rows)
+            p_progress = entry_progress(p_rows)
+            perfect = {
+                "id": "perfect",
+                "name": "Perfect Lineup",
+                "salary": None if p_hidden else p_entry["salary"],
+                "salary_hidden": p_hidden,
+                "total": p_total,
+                "proj_total": entry_proj_total(p_rows),
+                "playing": p_progress["playing"],
+                "yet_to_go": p_progress["yet_to_go"],
+                "medal": "👑",
+                "rows": p_rows,
+            }
 
     pool = []
     with sleeper_lock:
         for p in PLAYERS:
-            st = own_stats.get(p["id"]) or {}
+            if not player_game_started(p):
+                continue  # hide not-yet-played from pool entirely
+            g = game_for_team(p.get("team"))
             pool.append({
                 "id": p["id"],
                 "name": p["name"],
                 "img": p.get("img") or DEFAULT_IMG,
                 "sal": int(p["salary"]),
                 "pts": float(scores.get(p["id"], 0)),
-                "own_pct": st.get("own_pct", 0),
-                "mvp_pct": st.get("mvp_pct", 0),
+                "proj": live_player_proj(p["id"], scores.get(p["id"], 0), g),
+                "own_pct": revealed_own_pct(p["id"], own_stats),
+                "game_started": True,
+                "pos": p.get("pos"),
+                "team": p.get("team"),
+                "game": g,
+                "game_label": (g or {}).get("label"),
             })
     pool.sort(key=lambda x: (-x["pts"], -x["sal"], x["name"]))
 
     return {
         "ok": True,
+        "available": True,
         "live": True,
         "matchup": MATCHUP,
         "entries": ranked,
         "pool": pool,
+        "games": list(_espn_cache.get("games") or []),
         "perfect": perfect,
         "scores_updated_at": scores_updated_at,
-        "sleeper_season": sleeper_season,
-        "sleeper_week": sleeper_week,
+        "projections_updated_at": projections_updated_at,
+        "sleeper_season": season,
+        "sleeper_week": week,
+        "contest_id": CONTEST_ID,
         "poll_sec": STATS_POLL_SEC,
-        "locked": is_locked(),
+        "locked": True,
         **lock_info(),
     }
 
@@ -790,54 +1105,158 @@ BY = {p["id"]: p for p in PLAYERS}
 seed_live_scores_from_file()
 
 
-def lineup_salary(mvp, flex):
-    return BY[mvp]["mvp_salary"] + sum(BY[i]["salary"] for i in flex)
+def lineup_salary(lineup):
+    return sum(BY[lineup[s]]["salary"] for s in SLOT_ORDER if lineup.get(s) in BY)
 
 
-def player_proj(pid, mvp=False):
+def player_proj(pid):
+    """Pregame / week Sleeper PPR projection stored on the player."""
     p = BY.get(pid) or {}
     pts = p.get("proj")
     if pts is None:
         return None
     try:
-        n = float(pts)
+        return round(float(pts), 2)
     except (TypeError, ValueError):
         return None
-    return round(n * 1.5, 2) if mvp else round(n, 2)
+
+
+def parse_clock_minutes(clock):
+    clock = (clock or "0:00").strip()
+    try:
+        parts = clock.split(":")
+        mins = int(parts[0])
+        secs = int(parts[1]) if len(parts) > 1 else 0
+        return max(0.0, mins + secs / 60.0)
+    except (TypeError, ValueError, IndexError):
+        return 0.0
+
+
+def game_progress_frac(game):
+    """0 = kickoff, 1 = final. Uses ESPN period + countdown clock."""
+    if not game:
+        return 0.0
+    state = (game.get("state") or "pre").lower()
+    if state == "pre":
+        return 0.0
+    if state == "post":
+        return 1.0
+    try:
+        period = int(game.get("period") or 1)
+    except (TypeError, ValueError):
+        period = 1
+    rem = parse_clock_minutes(game.get("clock"))
+    q_len = 15.0
+    elapsed_in_q = max(0.0, min(q_len, q_len - rem))
+    if period <= 4:
+        done = (period - 1) * q_len + elapsed_in_q
+        return max(0.0, min(1.0, done / (4 * q_len)))
+    # Overtime — treat as nearly finished
+    return min(1.0, 0.97 + 0.03 * (1.0 - min(rem, 10.0) / 10.0))
+
+
+def live_player_proj(pid, live_pts=None, game=None):
+    """Live projection from Sleeper pregame + game clock.
+
+    - Pregame: Sleeper week proj
+    - Final: actual pts
+    - In progress: actual + (pregame × fraction of game remaining)
+      So a hot Q1 (12 pts on a 15 proj) still has ~3 quarters of upside left,
+      instead of getting capped near the old pregame number.
+    """
+    pl = BY.get(pid) or {}
+    pre = player_proj(pid)
+    if live_pts is None:
+        live_pts = pl.get("live_pts")
+    try:
+        live_pts = float(live_pts) if live_pts is not None else 0.0
+    except (TypeError, ValueError):
+        live_pts = 0.0
+    if game is None:
+        game = game_for_team(pl.get("team"))
+    state = ((game or {}).get("state") or "pre").lower()
+    if pre is None:
+        if state in ("in", "post") or live_pts:
+            return round(live_pts, 2)
+        return None
+    pre = float(pre)
+    if state == "pre":
+        return round(pre, 2)
+    if state == "post":
+        return round(live_pts, 2)
+    frac_left = 1.0 - game_progress_frac(game)
+    return round(live_pts + pre * frac_left, 2)
+
+
+def normalize_lineup(body):
+    """Accept {lineup:{slot:id}} or flat slot keys."""
+    lu = body.get("lineup")
+    if isinstance(lu, dict) and lu:
+        return {s: lu.get(s) for s in SLOT_ORDER}
+    return {s: body.get(s) for s in SLOT_ORDER}
+
+
+def validate_lineup(lineup):
+    ids = []
+    for slot in SLOT_ORDER:
+        pid = lineup.get(slot)
+        if not pid:
+            return f"Need a player in {slot}"
+        if pid not in BY:
+            return f"Unknown player in {slot}"
+        pl = BY[pid]
+        if pl["pos"] not in SLOT_ELIGIBLE[slot]:
+            return f"{pl['name']} ({pl['pos']}) cannot fill {slot}"
+        ids.append(pid)
+    if len(set(ids)) != len(ids):
+        return "Duplicate player"
+    sal = lineup_salary(lineup)
+    if sal > CAP:
+        return f"Over cap ({sal:,} > {CAP:,})"
+    return None
+
+
+def validate_late_swap(existing, new_lineup):
+    """After slate lock: started games stay put; replacements must be unstarted."""
+    old = existing.get("lineup") or {}
+    for slot in SLOT_ORDER:
+        old_id = old.get(slot)
+        new_id = new_lineup.get(slot)
+        old_pl = BY.get(old_id) if old_id else None
+        new_pl = BY.get(new_id) if new_id else None
+        if old_pl and player_game_started(old_pl):
+            if new_id != old_id:
+                return f"{slot} is locked — {old_pl['name']}'s game has started"
+        else:
+            # swapping an unstarted slot: new player must also be unstarted
+            if new_pl and player_game_started(new_pl):
+                return f"Can't add {new_pl['name']} — their game has already started"
+    return None
 
 
 def enrich(entry):
-    mvp = entry.get("mvp", "")
-    flex = entry.get("flex") or []
-    details = [
-        {
-            "id": mvp,
-            "name": BY.get(mvp, {}).get("name", mvp),
-            "slot": "MVP",
-            "salary": BY.get(mvp, {}).get("mvp_salary", 0),
-            "team": BY.get(mvp, {}).get("team", ""),
-            "pos": BY.get(mvp, {}).get("pos", ""),
-            "img": BY.get(mvp, {}).get("img", DEFAULT_IMG),
-            "proj": player_proj(mvp, mvp=True),
-        }
-    ] + [
-        {
-            "id": i,
-            "name": BY[i]["name"],
-            "slot": "FLEX",
-            "salary": BY[i]["salary"],
-            "team": BY[i]["team"],
-            "pos": BY[i]["pos"],
-            "img": BY[i].get("img", DEFAULT_IMG),
-            "proj": player_proj(i, mvp=False),
-        }
-        for i in flex if i in BY
-    ]
+    lu = entry.get("lineup") or {}
+    details = []
+    for slot in SLOT_ORDER:
+        pid = lu.get(slot)
+        pl = BY.get(pid) or {}
+        details.append({
+            "id": pid,
+            "name": pl.get("name", pid or ""),
+            "slot": slot,
+            "salary": int(pl.get("salary") or 0),
+            "team": pl.get("team", ""),
+            "pos": pl.get("pos", ""),
+            "opp": pl.get("opp", ""),
+            "img": pl.get("img", DEFAULT_IMG),
+            "proj": live_player_proj(pid) if pid else None,
+            "game": pl.get("game", ""),
+            "kickoff": pl.get("kickoff"),
+            "game_started": player_game_started(pl) if pl else False,
+        })
     proj_vals = [d["proj"] for d in details if d.get("proj") is not None]
     return {
         **entry,
-        "mvp_name": BY.get(mvp, {}).get("name", mvp),
-        "flex_names": [BY[i]["name"] for i in flex if i in BY],
         "players_detail": details,
         "proj_total": round(sum(proj_vals), 2) if proj_vals else None,
     }
@@ -846,21 +1265,30 @@ def enrich(entry):
 def lineup_text(entry):
     e = enrich(entry)
     lines = [
-        f"Genius Sports NFL DFS — Falcons @ Packers",
+        f"Genius Sports NFL DFS — {MATCHUP}",
         f"Name: {e['name']}",
         f"Email: {e.get('email', '')}",
         f"Salary used: ${e['salary']:,} / $60,000",
         "",
-        f"MVP (1.5x): {e['mvp_name']}",
     ]
-    for i, n in enumerate(e["flex_names"], 1):
-        lines.append(f"FLEX {i}: {n}")
+    for d in e["players_detail"]:
+        opp = (d.get("opp") or "").strip()
+        game = (d.get("game") or "").strip()
+        team = (d.get("team") or "").strip()
+        opp_lbl = opp
+        if opp and game and "@" in game:
+            away, _, home = game.partition("@")
+            if team == away:
+                opp_lbl = f"@{opp}"
+            elif team == home:
+                opp_lbl = f"vs {opp}"
+        tail = f" ({team} {opp_lbl})" if team and opp_lbl else (f" ({team})" if team else "")
+        lines.append(f"{d['slot']}: {d['name']}{tail}")
     lines += ["", "Scoring: Full PPR (Sleeper). Good luck!"]
     return "\n".join(lines)
 
 
 def try_email(to, entry):
-    """Send lineup email if SMTP_HOST / SMTP_USER / SMTP_PASS / MAIL_FROM are set."""
     host = os.environ.get("SMTP_HOST")
     user = os.environ.get("SMTP_USER")
     password = os.environ.get("SMTP_PASS")
@@ -868,7 +1296,7 @@ def try_email(to, entry):
     if not (host and user and password and mail_from and to):
         return False
     msg = EmailMessage()
-    msg["Subject"] = "Your Genius Sports NFL DFS lineup — Falcons @ Packers"
+    msg["Subject"] = f"Your Genius Sports NFL DFS lineup — {MATCHUP}"
     msg["From"] = mail_from
     msg["To"] = to
     msg.set_content(lineup_text(entry))
@@ -882,11 +1310,27 @@ def try_email(to, entry):
 
 def load():
     if DATA.exists():
-        return json.loads(DATA.read_text())
-    return {"lineups": []}
+        try:
+            d = json.loads(DATA.read_text())
+        except Exception:
+            d = {"lineups": []}
+    else:
+        d = {"lineups": []}
+    # Skip contest wipe while recovering submitted lineups from the volume.
+    if os.environ.get("RECOVER_MODE") == "1":
+        return d
+    if d.get("contest_id") != CONTEST_ID:
+        print(
+            f"Contest changed ({d.get('contest_id')!r} → {CONTEST_ID!r}); clearing lineups"
+        )
+        d = {"contest_id": CONTEST_ID, "lineups": []}
+        save(d)
+    return d
 
 
 def save(d):
+    d = dict(d)
+    d["contest_id"] = CONTEST_ID
     DATA.write_text(json.dumps(d, indent=2))
 
 
@@ -895,6 +1339,7 @@ class H(BaseHTTPRequestHandler):
         b = body if isinstance(body, bytes) else json.dumps(body).encode()
         self.send_response(code)
         self.send_header("Content-Type", ctype)
+        self.send_header("Cache-Control", "no-store")
         self.send_header("Content-Length", str(len(b)))
         self.end_headers()
         self.wfile.write(b)
@@ -904,6 +1349,18 @@ class H(BaseHTTPRequestHandler):
         p = u.path
         if p in ("/", "/index.html"):
             return self._send(200, (ROOT / "index.html").read_bytes(), "text/html")
+        if p == "/classic.js":
+            path = ROOT / "classic.js"
+            if not path.exists():
+                return self._send(404, {"error": "Missing classic.js"})
+            body = path.read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/javascript")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if p == "/leaderboard":
             path = ROOT / "leaderboard.html"
             if not path.exists():
@@ -932,14 +1389,17 @@ class H(BaseHTTPRequestHandler):
         if p == "/api/state":
             with sleeper_lock:
                 payload = {
-                    "players": PLAYERS,
+                    "players": annotate_game_started(PLAYERS),
                     "cap": CAP,
-                    "flex_n": FLEX_N,
+                    "slots": SLOT_ORDER,
+                    "slot_eligible": {k: list(v) for k, v in SLOT_ELIGIBLE.items()},
                     "injuries_updated_at": injuries_updated_at,
                     "projections_updated_at": projections_updated_at,
                     "scores_updated_at": scores_updated_at,
                     "sleeper_season": sleeper_season,
                     "sleeper_week": sleeper_week,
+                    "matchup": MATCHUP,
+                    "contest_id": CONTEST_ID,
                     **lock_info(),
                 }
             return self._send(200, payload)
@@ -950,8 +1410,48 @@ class H(BaseHTTPRequestHandler):
                 return self._send(400, {"error": "Email required"})
             for e in load()["lineups"]:
                 if (e.get("email") or "").lower() == email:
-                    return self._send(200, {"ok": True, "entry": enrich(e)})
+                    return self._send(200, {"ok": True, "entry": enrich(e), **lock_info()})
             return self._send(404, {"error": "No lineup found for that email"})
+        if p == "/api/admin/raw-data":
+            qs = parse_qs(u.query)
+            secret = (qs.get("secret") or [""])[0]
+            if not ADMIN_SECRET or secret != ADMIN_SECRET:
+                return self._send(403, {"error": "Forbidden"})
+            listing = []
+            try:
+                for f in sorted(DATA_DIR.iterdir()):
+                    try:
+                        listing.append(
+                            {
+                                "name": f.name,
+                                "size": f.stat().st_size,
+                                "is_dir": f.is_dir(),
+                            }
+                        )
+                    except Exception as ex:
+                        listing.append({"name": f.name, "error": str(ex)})
+            except Exception as ex:
+                listing = [{"error": str(ex)}]
+            raw_text = DATA.read_text() if DATA.exists() else None
+            parsed = None
+            if raw_text:
+                try:
+                    parsed = json.loads(raw_text)
+                except Exception as ex:
+                    parsed = {"parse_error": str(ex)}
+            return self._send(
+                200,
+                {
+                    "ok": True,
+                    "data_path": str(DATA),
+                    "data_dir": str(DATA_DIR),
+                    "listing": listing,
+                    "raw_text": raw_text,
+                    "data": parsed,
+                    "contest_id_env": CONTEST_ID,
+                    "lineup_count": len((parsed or {}).get("lineups") or []),
+                },
+            )
         if p == "/api/admin/delete":
             qs = parse_qs(u.query)
             secret = (qs.get("secret") or [""])[0]
@@ -990,7 +1490,6 @@ class H(BaseHTTPRequestHandler):
                 raw = fetch_player_gamelog(sid, season)
                 if raw is None:
                     return self._send(502, {"error": "Could not load game log from Sleeper"})
-                # Columns depend on position
                 pos = pl.get("pos") or ""
                 if pos == "QB":
                     columns = ["CMP", "ATT", "PYD", "PTD", "INT", "CAR", "RYD", "RTD", "FUM"]
@@ -1026,22 +1525,21 @@ class H(BaseHTTPRequestHandler):
             return self._send(200, payload)
         if p == "/api/export.csv":
             d = load()
-            lines = ["name,email,mvp,mvp_name,flex_ids,flex_names,salary,submitted_at"]
+            lines = ["name,email," + ",".join(SLOT_ORDER) + ",salary,submitted_at"]
             for e in d["lineups"]:
-                mvp = e.get("mvp", "")
-                flex = e.get("flex") or []
+                lu = e.get("lineup") or {}
                 safe = e["name"].replace('"', "'")
                 em = (e.get("email") or "").replace('"', "'")
-                mvp_name = BY.get(mvp, {}).get("name", mvp)
-                flex_names = "; ".join(BY[i]["name"] for i in flex if i in BY)
+                ids = [lu.get(s, "") for s in SLOT_ORDER]
+                names = "; ".join(BY[i]["name"] for i in ids if i in BY)
                 submitted = e.get("submitted_at", "")
                 lines.append(
-                    f'"{safe}","{em}","{mvp}","{mvp_name}","{";".join(flex)}","{flex_names}",{e["salary"]},"{submitted}"'
+                    f'"{safe}","{em}",' + ",".join(ids) + f',{e["salary"]},"{submitted}"'
                 )
             body = ("\n".join(lines) + "\n").encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/csv")
-            self.send_header("Content-Disposition", "attachment; filename=tnf-lineups.csv")
+            self.send_header("Content-Disposition", "attachment; filename=nfl-dfs-lineups.csv")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
@@ -1053,39 +1551,40 @@ class H(BaseHTTPRequestHandler):
             return self.send_error(404)
         body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)) or 0) or b"{}")
         submitted_at = now_et()
-        if submitted_at >= LOCK_AT:
-            return self._send(403, {"error": "Entries locked — kickoff was 8:15pm ET Thursday", **lock_info()})
         name = (body.get("name") or "").strip()
         email = (body.get("email") or "").strip().lower()
-        mvp = body.get("mvp")
-        flex = body.get("flex") or []
+        lineup = normalize_lineup(body)
         if not name:
             return self._send(400, {"error": "Enter your name"})
         if not email or not EMAIL_RE.match(email):
             return self._send(400, {"error": "Enter a valid email"})
+        err = validate_lineup(lineup)
+        if err:
+            return self._send(400, {"error": err, **lock_info()})
         d = load()
         existing = next((e for e in d["lineups"] if (e.get("email") or "").lower() == email), None)
-        if not mvp or len(flex) != FLEX_N:
-            return self._send(400, {"error": f"Need 1 MVP + {FLEX_N} FLEX"})
-        ids = [mvp] + flex
-        if len(set(ids)) != len(ids):
-            return self._send(400, {"error": "Duplicate player"})
-        if any(i not in BY for i in ids):
-            return self._send(400, {"error": "Unknown player"})
-        sal = lineup_salary(mvp, flex)
-        if sal > CAP:
-            return self._send(400, {"error": f"Over cap ({sal:,} > {CAP:,})"})
+        if is_locked():
+            if not existing:
+                return self._send(
+                    403,
+                    {
+                        "error": "New entries locked — first game has started. Late swap only for existing lineups.",
+                        **lock_info(),
+                    },
+                )
+            swap_err = validate_late_swap(existing, lineup)
+            if swap_err:
+                return self._send(403, {"error": swap_err, **lock_info()})
+        sal = lineup_salary(lineup)
         entry = {
             "id": existing["id"] if existing else str(uuid.uuid4())[:8],
             "name": name,
             "email": email,
-            "mvp": mvp,
-            "flex": flex,
+            "lineup": {s: lineup[s] for s in SLOT_ORDER},
             "salary": sal,
             "submitted_at": submitted_at.isoformat(),
         }
         if existing:
-            # replace in place
             for i, e in enumerate(d["lineups"]):
                 if (e.get("email") or "").lower() == email:
                     d["lineups"][i] = entry
@@ -1100,7 +1599,7 @@ class H(BaseHTTPRequestHandler):
             emailed = try_email(email, entry)
         except Exception as ex:
             print("email failed:", ex)
-        self._send(200, {"ok": True, "entry": enrich(entry), "emailed": emailed, "updated": updated})
+        self._send(200, {"ok": True, "entry": enrich(entry), "emailed": emailed, "updated": updated, **lock_info()})
 
     def log_message(self, fmt, *args):
         print(fmt % args)
@@ -1110,7 +1609,8 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8766"))
     print(f"Loaded {len(PLAYERS)} players from {CSV.name}")
     print(f"Data file: {DATA}")
-    print(f"Lock: {LOCK_AT.strftime('%a %m/%d %I:%M%p %Z')}")
+    print(f"Format: classic {', '.join(SLOT_ORDER)} · cap ${CAP:,}")
+    print(f"Lock / late-swap: {LOCK_AT.strftime('%a %m/%d %I:%M%p %Z')}")
     print(f"Listening on 0.0.0.0:{port}")
     print(f"Sleeper injury/proj poll every {INJURY_POLL_SEC}s · live scores every {STATS_POLL_SEC}s")
     if os.environ.get("SMTP_HOST"):

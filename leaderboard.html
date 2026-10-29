@@ -21,7 +21,10 @@
   .who{min-width:0;flex:1}
   .card h2{margin:0;font-size:1.1rem}
   .meta{color:#9aabc4;font-size:.8rem;margin-top:.15rem}
-  .total{margin-left:auto;font-size:1.6rem;font-weight:800;color:#d4b56a;font-variant-numeric:tabular-nums}
+  .meta.progress{color:#eef2f8;font-weight:600}
+  .meta.progress .yet{color:#d4b56a}
+  .meta.progress .live{color:#7dcea0}
+  .total{font-size:1.6rem;font-weight:800;color:#d4b56a;font-variant-numeric:tabular-nums}
   .total span{font-size:.75rem;font-weight:600;color:#9aabc4}
   .chev{color:#9aabc4;font-size:1rem;transition:transform .15s}
   .card[data-open="1"] .chev{transform:rotate(180deg)}
@@ -34,6 +37,9 @@
   .num{text-align:right;font-variant-numeric:tabular-nums}
   .own{color:#9ec5ff}
   .mvpown{color:#d4b56a}
+  .pending{color:#9aabc4;font-style:italic;font-weight:500}
+  tr.hidden-row td{opacity:.8}
+  .mystery-av{width:32px;height:32px;border-radius:50%;background:#0a0e18;border:1px dashed #4a5a78;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:#d4b56a;font-weight:800;font-size:.95rem}
   .sal{color:#9aabc4}
   .pname{display:flex;align-items:center;gap:.55rem}
   .avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;background:#0a0e18;border:1px solid #2a3548;flex-shrink:0}
@@ -57,6 +63,31 @@
   a.home:hover{text-decoration:underline}
   .err{color:#f0a0a0;padding:1rem 0}
   .loading{color:#9aabc4;padding:1rem 0}
+  .scoreboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:.5rem;margin:0 0 1.15rem}
+  .sb-game{background:#151c2c;border:1px solid #2a3548;border-radius:10px;padding:.55rem .65rem;font-variant-numeric:tabular-nums}
+  .sb-game.in{border-color:#3ecf8e66}
+  .sb-game.post{opacity:.92}
+  .sb-game.pre{opacity:.75}
+  .sb-line{font-size:.86rem;font-weight:700;color:#eef2f8;line-height:1.25}
+  .sb-status{margin-top:.2rem;font-size:.72rem;font-weight:600;color:#9aabc4}
+  .sb-game.in .sb-status{color:#7dcea0}
+  .sb-game.post .sb-status{color:#d4b56a}
+  .gamecell{color:#9aabc4;font-size:.78rem;font-weight:600;white-space:nowrap}
+  .gamecell .gstatus{color:#7dcea0;font-weight:700}
+  .gamecell.post .gstatus{color:#d4b56a}
+  .entry-game{display:block;color:#9aabc4;font-size:.72rem;font-weight:600;margin-top:.1rem}
+  .proj{color:#b8a0e8;font-variant-numeric:tabular-nums}
+  .poscell,.teamcell{color:#9aabc4;font-size:.82rem;font-weight:600}
+  th.col-filter{vertical-align:bottom}
+  th.col-filter .th-label{display:flex;align-items:center;gap:.2rem;margin-bottom:.25rem}
+  th.col-filter input{width:100%;max-width:4.2rem;box-sizing:border-box;padding:.2rem .35rem;border:1px solid #2a3548;border-radius:5px;background:#0a0e18;color:#eef2f8;font:inherit;font-size:.7rem;font-weight:600}
+  th.col-filter input:focus{outline:1px solid #4a6a9a;border-color:#4a6a9a}
+  th.col-filter input::placeholder{color:#6a7a94;font-weight:500}
+  .card .total-wrap{margin-left:auto;text-align:right;flex-shrink:0}
+  .card .proj-total{font-size:.78rem;font-weight:600;color:#b8a0e8;margin-top:.15rem}
+  .card .proj-total.na{color:#6a7a94;font-style:italic;font-weight:500}
+  .pool-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
+  .pool-scroll table{min-width:720px}
 </style>
 </head>
 <body>
@@ -64,6 +95,7 @@
   <a class="home" href="/">← Back to contest</a>
   <h1>Genius Sports NFL DFS — Leaderboard <span class="live-pill" id="livePill" hidden><span class="dot"></span> LIVE</span></h1>
   <div class="sub" id="sub"></div>
+  <div class="scoreboard" id="scoreboard" hidden></div>
   <div class="standings-head">
     <h2>Standings</h2>
     <input class="standings-search" id="nameSearch" type="search" placeholder="Search by name…" autocomplete="off"/>
@@ -75,13 +107,22 @@
       <h2>Player pool</h2>
       <input class="pool-search" id="poolSearch" type="search" placeholder="Search player…" autocomplete="off"/>
     </div>
-    <div class="card"><table id="poolTable">
+    <div class="card pool-scroll"><table id="poolTable">
       <thead><tr>
         <th class="sortable" data-key="name" data-type="str">Player <span class="ind">▲</span></th>
+        <th class="sortable col-filter" data-key="pos" data-type="str">
+          <div class="th-label">Pos <span class="ind">▲</span></div>
+          <input id="filterPos" type="text" placeholder="QB" autocomplete="off" spellcheck="false"/>
+        </th>
+        <th class="sortable col-filter" data-key="team" data-type="str">
+          <div class="th-label">Team <span class="ind">▲</span></div>
+          <input id="filterTeam" type="text" placeholder="KC" autocomplete="off" spellcheck="false"/>
+        </th>
+        <th class="sortable" data-key="game" data-type="str">Game <span class="ind">▲</span></th>
         <th class="sortable num" data-key="sal" data-type="num">Sal <span class="ind">▼</span></th>
+        <th class="sortable num" data-key="proj" data-type="num" title="Live proj: actual + remaining upside by game time">Proj <span class="ind">▼</span></th>
         <th class="sortable num active" data-key="pts" data-type="num">Pts <span class="ind">▼</span></th>
         <th class="sortable num" data-key="own" data-type="num">Own% <span class="ind">▼</span></th>
-        <th class="sortable num" data-key="mvp" data-type="num">MVP% <span class="ind">▼</span></th>
       </tr></thead>
       <tbody id="poolBody"></tbody>
     </table></div>
@@ -98,43 +139,83 @@ let sortKey = 'pts', sortDir = 'desc';
 let pollSec = 60;
 let timer = null;
 
-const money = n => '$' + Number(n || 0).toLocaleString();
-const pct = n => `${Number(n || 0)}%`;
+const money = n => (n == null || n === '') ? '—' : ('$' + Number(n).toLocaleString());
+const pct = n => (n == null || n === '') ? '—' : `${Number(n)}%`;
 const fmtPts = n => Number(n || 0).toFixed(2);
+const fmtProj = n => (n == null || n === '') ? '—' : Number(n).toFixed(2);
+
+function progressLabel(e) {
+  const playing = Number(e.playing || 0);
+  const yet = Number(e.yet_to_go || 0);
+  return `<span class="live">${playing} playing</span> · <span class="yet">${yet} to go</span>`;
+}
 
 function avatar(src) {
   return `<img class="avatar" src="${src || DEFAULT_IMG}" alt="" loading="lazy" onerror="this.src='${DEFAULT_IMG}'"/>`;
 }
 
+function gameLabel(g) {
+  if (!g) return '';
+  return g.label || [g.line, g.status].filter(Boolean).join(' · ');
+}
+
+function gameCellHtml(g) {
+  if (!g) return '—';
+  const st = g.state || '';
+  const status = g.status || '';
+  const line = g.line || '';
+  return `<span class="gamecell ${st}"><span class="gline">${line}</span>${status ? ` <span class="gstatus">${status}</span>` : ''}</span>`;
+}
+
 function rowHtml(r) {
-  const mult = r.mult && r.mult !== 1 ? ` × ${r.mult}` : '';
-  const cls = r.slot === 'MVP' ? 'mvp' : '';
-  return `<tr class="${cls}"><td>${r.slot}</td>
-    <td><div class="pname">${avatar(r.img)}<span>${r.name}</span></div></td>
+  if (r.hidden || r.game_started === false) {
+    return `<tr class="hidden-row"><td>${r.slot}</td>
+      <td><div class="pname"><span class="mystery-av" aria-hidden="true">?</span><span class="pending">Player's game hasn't started yet</span></div></td>
+      <td class="num sal">—</td>
+      <td class="num proj">—</td>
+      <td class="num"><strong>—</strong></td>
+      <td class="num own">—</td></tr>`;
+  }
+  const gTip = gameLabel(r.game);
+  return `<tr><td>${r.slot}</td>
+    <td><div class="pname">${avatar(r.img)}<span>${r.name}${gTip ? `<span class="entry-game">${gTip}</span>` : ''}</span></div></td>
     <td class="num sal">${money(r.sal)}</td>
-    <td class="num">${fmtPts(r.base)}${mult}</td>
+    <td class="num proj">${fmtProj(r.proj)}</td>
     <td class="num"><strong>${fmtPts(r.pts)}</strong></td>
-    <td class="num own">${pct(r.own_pct)}</td>
-    <td class="num mvpown">${pct(r.mvp_pct)}</td></tr>`;
+    <td class="num own">${pct(r.own_pct)}</td></tr>`;
 }
 
 function cardHtml(e, extraClass = '') {
   const open = openIds.has(String(e.id)) ? '1' : '0';
   const hidden = open === '1' ? '' : 'hidden';
   const name = e.name || '';
+  const isPerfect = extraClass.includes('perfect') || e.id === 'perfect';
+  const hasHiddenPlayer = !!(e.salary_hidden || (e.rows || []).some(r => r.hidden || r.game_started === false));
+  const salBit = (hasHiddenPlayer || e.salary == null) ? 'Salary hidden' : `${money(e.salary)} salary`;
+  const projBit = (e.proj_total == null)
+    ? `<div class="proj-total na">Proj N/A</div>`
+    : `<div class="proj-total">Proj ${fmtProj(e.proj_total)}</div>`;
+  const progressBit = isPerfect ? '' : `<div class="meta progress">${progressLabel(e)}</div>`;
+  const subMeta = isPerfect
+    ? `<div class="meta">${salBit}</div>`
+    : `<div class="meta">${salBit} · click to view lineup</div>`;
   return `<article class="card ${extraClass}" data-id="${e.id}" data-name="${name.toLowerCase()}" data-open="${open}">
     <button type="button" class="card-toggle" aria-expanded="${open === '1'}">
       <span class="rank">${e.medal || ''}</span>
       <div class="who">
         <h2>${name}</h2>
-        <div class="meta">${money(e.salary)} salary · click to view lineup</div>
+        ${progressBit}
+        ${subMeta}
       </div>
-      <div class="total">${fmtPts(e.total)} <span>pts</span></div>
+      <div class="total-wrap">
+        <div class="total">${fmtPts(e.total)} <span>pts</span></div>
+        ${projBit}
+      </div>
       <span class="chev" aria-hidden="true">▾</span>
     </button>
     <div class="detail" ${hidden}>
       <table>
-        <thead><tr><th>Slot</th><th>Player</th><th class="num">Sal</th><th class="num">Raw</th><th class="num">Pts</th><th class="num">Own</th><th class="num">MVP</th></tr></thead>
+        <thead><tr><th>Slot</th><th>Player</th><th class="num">Sal</th><th class="num">Proj</th><th class="num">Pts</th><th class="num">Own</th></tr></thead>
         <tbody>${(e.rows || []).map(rowHtml).join('')}</tbody>
       </table>
     </div>
@@ -178,17 +259,27 @@ function applyPoolSortFilter() {
   const tbody = document.getElementById('poolBody');
   const search = document.getElementById('poolSearch');
   const q = (search.value || '').trim().toLowerCase();
+  const posQ = ((document.getElementById('filterPos') || {}).value || '').trim().toLowerCase();
+  const teamQ = ((document.getElementById('filterTeam') || {}).value || '').trim().toLowerCase();
   const rows = Array.from(tbody.querySelectorAll('tr'));
   rows.forEach(r => {
     const name = r.dataset.name || '';
-    r.style.display = !q || name.includes(q) ? '' : 'none';
+    const team = r.dataset.team || '';
+    const pos = r.dataset.pos || '';
+    const nameOk = !q || name.includes(q);
+    const posOk = !posQ || pos === posQ || pos.startsWith(posQ);
+    const teamOk = !teamQ || team === teamQ || team.startsWith(teamQ);
+    r.style.display = nameOk && posOk && teamOk ? '' : 'none';
   });
   const visible = rows.filter(r => r.style.display !== 'none');
+  const strKeys = new Set(['name', 'pos', 'team', 'game']);
   visible.sort((a, b) => {
     let av = a.dataset[sortKey], bv = b.dataset[sortKey];
-    if (sortKey !== 'name') {
-      av = parseFloat(av) || 0;
-      bv = parseFloat(bv) || 0;
+    if (!strKeys.has(sortKey)) {
+      av = parseFloat(av);
+      bv = parseFloat(bv);
+      if (!Number.isFinite(av)) av = sortDir === 'desc' ? -Infinity : Infinity;
+      if (!Number.isFinite(bv)) bv = sortDir === 'desc' ? -Infinity : Infinity;
       return sortDir === 'desc' ? bv - av : av - bv;
     }
     av = (av || '').toLowerCase();
@@ -200,17 +291,44 @@ function applyPoolSortFilter() {
   visible.forEach(r => tbody.appendChild(r));
 }
 
+function renderScoreboard(games) {
+  const el = document.getElementById('scoreboard');
+  if (!el) return;
+  const list = games || [];
+  if (!list.length) {
+    el.hidden = true;
+    el.innerHTML = '';
+    return;
+  }
+  el.hidden = false;
+  el.innerHTML = list.map(g => {
+    const st = g.state || 'pre';
+    return `<div class="sb-game ${st}">
+      <div class="sb-line">${g.line || ''}</div>
+      <div class="sb-status">${g.status || ''}</div>
+    </div>`;
+  }).join('');
+}
+
 function renderPool(pool) {
   const tbody = document.getElementById('poolBody');
   tbody.innerHTML = (pool || []).map(p => `
-    <tr data-name="${(p.name || '').toLowerCase()}" data-pts="${p.pts}" data-sal="${p.sal}"
-        data-own="${p.own_pct}" data-mvp="${p.mvp_pct}">
+    <tr data-name="${(p.name || '').toLowerCase()}"
+        data-pos="${(p.pos || '').toLowerCase()}"
+        data-team="${(p.team || '').toLowerCase()}"
+        data-pts="${p.pts}" data-sal="${p.sal}"
+        data-proj="${p.proj == null ? -1 : p.proj}"
+        data-own="${p.own_pct == null ? -1 : p.own_pct}"
+        data-game="${(p.game_label || gameLabel(p.game) || '').toLowerCase()}">
       <td><div class="pname">${avatar(p.img)}<span>${p.name}</span></div></td>
+      <td class="poscell">${p.pos || '—'}</td>
+      <td class="teamcell">${p.team || '—'}</td>
+      <td>${gameCellHtml(p.game)}</td>
       <td class="num sal">${money(p.sal)}</td>
+      <td class="num proj">${fmtProj(p.proj)}</td>
       <td class="num">${fmtPts(p.pts)}</td>
       <td class="num own">${pct(p.own_pct)}</td>
-      <td class="num mvpown">${pct(p.mvp_pct)}</td>
-    </tr>`).join('') || `<tr><td colspan="5">No players</td></tr>`;
+    </tr>`).join('') || `<tr><td colspan="8">No players</td></tr>`;
   applyPoolSortFilter();
 }
 
@@ -219,11 +337,26 @@ function render(data) {
   const updated = data.scores_updated_at
     ? new Date(data.scores_updated_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
     : '—';
-  document.getElementById('sub').textContent =
-    `${data.matchup || 'Showdown'} · Full PPR (Sleeper) · ${n} entries · Updated ${updated}`;
+  const weekBit = data.sleeper_week ? `Week ${data.sleeper_week}` : null;
+  document.getElementById('sub').textContent = data.available === false
+    ? (data.message || 'Leaderboard opens at kickoff.')
+    : `${data.matchup || 'Week 8'}${weekBit ? ' · ' + weekBit : ''} · Classic · Full PPR (Sleeper) · ${n} entries · Updated ${updated}`;
   document.getElementById('livePill').hidden = !data.live;
 
   const standings = document.getElementById('standings');
+  const poolSection = document.querySelector('.pool');
+  if (data.available === false) {
+    standings.innerHTML = `<p class="loading">${data.message || 'Leaderboard opens at kickoff.'}</p>`;
+    document.getElementById('standingsEmpty').hidden = true;
+    if (poolSection) poolSection.hidden = true;
+    document.getElementById('perfectWrap').hidden = true;
+    renderScoreboard([]);
+    if (data.poll_sec) pollSec = data.poll_sec;
+    return;
+  }
+  if (poolSection) poolSection.hidden = false;
+  renderScoreboard(data.games);
+
   if (!n) {
     standings.innerHTML = '<p class="loading">No entries yet.</p>';
     document.getElementById('standingsEmpty').hidden = true;
@@ -265,8 +398,17 @@ async function refresh() {
 
 document.getElementById('nameSearch').addEventListener('input', applyNameFilter);
 document.getElementById('poolSearch').addEventListener('input', applyPoolSortFilter);
+['filterPos', 'filterTeam'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', applyPoolSortFilter);
+  el.addEventListener('click', e => e.stopPropagation());
+  el.addEventListener('mousedown', e => e.stopPropagation());
+  el.addEventListener('keydown', e => e.stopPropagation());
+});
 document.querySelectorAll('#poolTable th.sortable').forEach(th => {
-  th.addEventListener('click', () => {
+  th.addEventListener('click', e => {
+    if (e.target.closest('input')) return;
     const key = th.dataset.key;
     const type = th.dataset.type;
     if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';

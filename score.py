@@ -299,7 +299,7 @@ def render_html(ranked, scores, names, images, own_stats, salaries=None, perfect
 <div class="wrap">
   <a class="home" href="/">← Back to contest</a>
   <h1>Genius Sports NFL DFS — Leaderboard</h1>
-  <div class="sub">Falcons @ Packers · Full PPR (Sleeper) · {len(ranked)} entries</div>
+  <div class="sub">Buccaneers @ Cowboys · Full PPR (Sleeper) · {len(ranked)} entries</div>
   {''.join(cards) if cards else '<p>No entries yet.</p>'}
   <div class="pool">
     <div class="pool-head">

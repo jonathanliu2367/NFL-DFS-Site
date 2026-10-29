@@ -3,19 +3,22 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Genius Sports NFL DFS — ATL @ GB</title>
+<title>Genius Sports NFL DFS — Week 8</title>
 <style>
   body{margin:0;font-family:system-ui,sans-serif;background:#0f1420;color:#eef2f8}
-  header{padding:1.2rem 1.4rem;background:linear-gradient(90deg,#0b226555,#00359455);border-bottom:1px solid #2a3548}
+  header{padding:1.2rem 1.4rem;background:linear-gradient(90deg,#0b226555,#1493ff33);border-bottom:1px solid #2a3548}
   h1{margin:0;font-size:1.25rem} .sub{color:#9aabc4;font-size:.88rem;margin-top:.3rem}
-  .wrap{max-width:1040px;margin:0 auto;padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 300px;gap:1rem;align-items:start}
-  @media(max-width:800px){.wrap{grid-template-columns:1fr}}
+  .wrap{max-width:1120px;margin:0 auto;padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 340px;gap:1.1rem;align-items:start}
+  @media(max-width:860px){.wrap{grid-template-columns:1fr}}
   label{display:block;font-size:.8rem;color:#9aabc4;margin-bottom:.3rem}
   input[type=text], input[type=email]{width:100%;padding:.65rem .8rem;border-radius:8px;border:1px solid #2a3548;background:#0a0e18;color:#fff;font-size:1rem;box-sizing:border-box;outline:none;-webkit-appearance:none;appearance:none}
   input[type=text]:focus, input[type=email]:focus{border-color:#1493ff}
-  .modes{display:flex;gap:.5rem;margin:1rem 0 .75rem}
-  .modes button{flex:1;padding:.65rem;border-radius:8px;border:1px solid #2a3548;background:#151c2c;color:#eef2f8;cursor:pointer;font-weight:600;font-size:.85rem}
-  .modes button.on{background:#1493ff;border-color:#1493ff;color:#fff}
+  .modes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;margin:1rem 0 .75rem;background:#0a0e18;border:1px solid #2a3548;border-radius:10px;overflow:hidden}
+  .modes button{min-width:0;padding:.7rem .25rem;border:0;border-right:1px solid #2a3548;border-radius:0;background:transparent;color:#9aabc4;cursor:pointer;font-weight:700;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase}
+  .modes button:last-child{border-right:0}
+  .modes button:hover{background:#151c2c;color:#eef2f8}
+  .modes button.on{background:#1493ff;color:#fff}
+  @media(max-width:520px){.modes{grid-template-columns:repeat(4,minmax(0,1fr))}.modes button{border-bottom:1px solid #2a3548;font-size:.72rem;padding:.6rem .2rem}.modes button:nth-child(4n){border-right:0}.modes button:nth-child(n+5){border-bottom:0}}
   .banner{background:#1493ff22;border:1px solid #1493ff66;color:#b8d9ff;padding:.65rem .85rem;border-radius:8px;font-size:.82rem;margin-bottom:.75rem}
   .bad{color:#ff6b6b}.ok{color:#3ecf8e}
   table{width:100%;border-collapse:collapse;background:#151c2c;border-radius:10px;border:1px solid #2a3548}
@@ -30,15 +33,25 @@
   th.sortable:hover{color:#eef2f8}
   th.sortable.active{color:#d4b56a}
   .filters{display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;align-items:center}
-  .filters select,.filters input[type=search]{padding:.45rem .6rem;border-radius:6px;border:1px solid #2a3548;background:#0a0e18;color:#eef2f8;font-size:.85rem}
-  .filters input[type=search]{flex:1;min-width:160px;outline:none;-webkit-appearance:none;appearance:none}
-  .filters input[type=search]:focus{border-color:#1493ff}
+  .filters select,.filters input[type=search]{padding:.45rem .6rem;border-radius:6px;border:1px solid #2a3548;background:#0a0e18;color:#eef2f8;font-size:.85rem;font:inherit}
+  .filters select{flex:0 0 auto;width:auto;max-width:100%;padding-right:1.6rem;cursor:pointer}
+  .filters input[type=search]{flex:1 1 160px;min-width:140px;outline:none;-webkit-appearance:none;appearance:none}
+  .filters input[type=search]:focus,.filters select:focus{border-color:#1493ff;outline:none}
   .filters input[type=search]::placeholder{color:#5a6a82}
   tr{cursor:pointer} tr:hover{background:#1c2538} tr.on{background:#1e3a2f}
   tr.locked{opacity:.45;cursor:not-allowed} tr.locked:hover{background:transparent}
   .note{color:#9aabc4;font-size:.72rem;margin-left:.35rem;font-style:italic}
-  .team{font-size:.68rem;font-weight:700;padding:.12rem .35rem;border-radius:3px;margin-right:.35rem}
-  .ATL{background:#a71930}.GB{background:#203731}
+  .team{font-size:.68rem;font-weight:700;padding:.12rem .35rem;border-radius:3px;margin-right:.35rem;background:#2a3548;color:#fff}
+  .ARI{background:#97233f}.ATL{background:#a71930}.BAL{background:#241773}.BUF{background:#00338d}
+  .CAR{background:#0085ca}.CHI{background:#0b162a}.CLE{background:#311d00}.DAL{background:#003594}
+  .GB{background:#203731}.HOU{background:#03202f}.IND{background:#002c5f}.JAC{background:#006778}
+  .KC{background:#e31837}.LAC{background:#0080c6}.LAR{background:#003594}.LV{background:#000}
+  .NE{background:#002244}.NO{background:#d3bc8d;color:#111}.NYG{background:#0b2265}.NYJ{background:#125740}
+  .PHI{background:#004c54}.PIT{background:#ffb612;color:#111}.TB{background:#d50a0a}.TEN{background:#0c2340}
+  .WAS{background:#5a1414}.SF{background:#aa0000}
+  .slot.game-locked{opacity:.55;cursor:not-allowed;border-left-color:#e74c3c55}
+  .slot .locktag{font-size:.62rem;color:#ff8e8e;font-weight:700;letter-spacing:.04em;margin-left:.35rem}
+  .confirm .row .slotlbl{min-width:3.2rem}
   .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#0a0e18;border:1px solid #2a3548;flex-shrink:0;vertical-align:middle}
   .avatar.sm{width:28px;height:28px}
   .pname{display:flex;align-items:center;gap:.55rem}
@@ -51,6 +64,8 @@
   .slot .pname{gap:.45rem}
   .sal{color:#d4b56a;font-variant-numeric:tabular-nums}
   .proj{color:#9ec5ff;font-variant-numeric:tabular-nums;font-size:.9rem}
+  .opp{color:#9aabc4;font-variant-numeric:tabular-nums;font-size:.85rem;white-space:nowrap}
+  .kick{color:#9ec5ff;font-variant-numeric:tabular-nums;font-size:.82rem;white-space:nowrap}
   .act{width:44px;text-align:center}
   .pm{width:30px;height:30px;border-radius:50%;border:0;cursor:pointer;font-size:1.2rem;line-height:1;font-weight:700}
   .pm.add{background:#1db954;color:#fff}
@@ -59,24 +74,37 @@
   button#go{width:100%;padding:.85rem;border:0;border-radius:8px;background:#d4b56a;color:#111;font-weight:700;font-size:1rem;cursor:pointer}
   button#go:disabled{opacity:.4;cursor:not-allowed}
   #msg{margin-top:.8rem;font-size:.9rem;min-height:1.2em}
-  .side{position:sticky;top:1rem;background:#151c2c;border:1px solid #2a3548;border-radius:10px;overflow:hidden}
-  .side h2{margin:0;padding:.75rem 1rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:#9aabc4;border-bottom:1px solid #2a3548}
-  .side-sal{padding:.85rem 1rem;border-bottom:1px solid #2a3548}
+  .side{position:sticky;top:.75rem;align-self:start;height:calc(100vh - 1.5rem);display:flex;flex-direction:column;background:#151c2c;border:1px solid #2a3548;border-radius:12px;overflow:hidden}
+  .side h2{margin:0;padding:.7rem 1rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:#9aabc4;border-bottom:1px solid #2a3548;flex-shrink:0}
+  .side-sal{padding:.75rem 1rem;border-bottom:1px solid #2a3548;flex-shrink:0}
   .side-sal .lbl{font-size:.72rem;color:#9aabc4;text-transform:uppercase;letter-spacing:.04em}
-  .side-sal .big{font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:.2rem}
-  .side-sal .used{font-size:.8rem;color:#9aabc4;margin-top:.15rem}
-  .slot{padding:.7rem 1rem;border-bottom:1px solid #2a3548;min-height:52px;cursor:pointer;border-left:3px solid transparent}
+  .side-sal .big{font-size:1.45rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:.15rem;line-height:1.1}
+  .side-sal .used{font-size:.8rem;color:#9aabc4;margin-top:.2rem;line-height:1.3}
+  #lineup-slots{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .slot{flex:1 1 0;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:.2rem;padding:.35rem .9rem;border-bottom:1px solid #2a3548;cursor:pointer;border-left:3px solid transparent;box-sizing:border-box}
   .slot:hover{background:#1c2538}
   .slot.active{background:#1a2a44;border-left-color:#1493ff}
-  .slot .lbl{font-size:.68rem;color:#9aabc4;font-weight:600;margin-bottom:.2rem}
-  .slot .empty{color:#5a6a82;font-size:.85rem}
-  .slot .who{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.9rem}
-  .slot .psal{color:#d4b56a;font-size:.8rem;white-space:nowrap}
-  .slot .pproj{color:#9ec5ff;font-size:.75rem;white-space:nowrap;font-variant-numeric:tabular-nums}
-  .slot .pright{display:flex;flex-direction:column;align-items:flex-end;gap:.1rem;line-height:1.15}
-  .confirm .pproj{color:#9ec5ff;font-size:.85rem;font-variant-numeric:tabular-nums;margin-right:.55rem}
+  .slot .lbl{display:flex;align-items:center;gap:.4rem;font-size:.68rem;color:#9aabc4;font-weight:700;margin:0;letter-spacing:.04em;text-transform:uppercase;line-height:1.1}
+  .slot .empty{color:#5a6a82;font-size:.9rem;line-height:1.2}
+  .slot .who{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.9rem;min-width:0}
+  .slot .pname{min-width:0;gap:.5rem;align-items:center}
+  .slot .pname.plink{cursor:pointer;border-radius:6px}
+  .slot .pname.plink:hover{background:#1c2a44}
+  .slot .pname .team{font-size:.65rem;padding:.1rem .32rem;flex-shrink:0}
+  .slot .nm-wrap{display:flex;flex-direction:column;gap:.08rem;min-width:0}
+  .slot .pname .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;line-height:1.2}
+  .slot .slot-meta{color:#8fa3bf;font-size:.72rem;font-weight:500;letter-spacing:.01em;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .slot .avatar.sm{width:32px;height:32px}
+  .slot .slot-right{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+  .slot .psal{color:#d4b56a;font-size:.82rem;white-space:nowrap;font-weight:600}
+  .slot .pm{width:28px;height:28px;font-size:1.1rem;flex-shrink:0}
+  .slot .locktag{margin-left:.15rem;font-size:.6rem;vertical-align:middle}
   .confirm .rightmeta{display:flex;align-items:center;gap:.15rem;flex-shrink:0}
-  .side-foot{padding:1rem}
+  .confirm .entry-sub{color:#8fa3bf;font-size:.75rem;font-weight:500;letter-spacing:.01em}
+  .confirm .pproj{color:#9ec5ff;font-size:.85rem;font-variant-numeric:tabular-nums}
+  .side-foot{padding:.85rem 1rem;border-top:1px solid #2a3548;background:#151c2c;flex-shrink:0}
+  .side-foot #go{padding:.8rem;font-size:1rem}
+  .side-foot #why{font-size:.8rem;margin-top:.4rem;min-height:0}
   .rules{max-width:1040px;margin:0 auto;padding:.9rem 1.2rem;font-size:.88rem;color:#c5d0e0;line-height:1.45;border-bottom:1px solid #2a3548;background:#121926}
   .rules strong{color:#eef2f8}
   .field{margin-bottom:.75rem}
@@ -87,6 +115,8 @@
   .confirm .row .who{display:flex;align-items:center;gap:.55rem;min-width:0}
   .confirm .row .slotlbl{font-size:.68rem;color:#9aabc4;font-weight:600;text-transform:uppercase;letter-spacing:.04em;min-width:2.6rem}
   .confirm .row .nm{font-weight:600}
+  .confirm .entry-meta{display:flex;flex-direction:column;gap:.1rem;min-width:0}
+  .confirm .nm-line{display:flex;align-items:center;flex-wrap:wrap;gap:.25rem}
   .lookup{max-width:1040px;margin:0 auto;padding:1rem 1.2rem;border-bottom:1px solid #2a3548;background:#151c2c}
   .lookup-box{display:flex;gap:.5rem;flex-wrap:wrap;align-items:end;max-width:520px}
   .lookup-box .field{flex:1;min-width:200px;margin:0}
@@ -132,10 +162,9 @@
   .gl-table .pts{color:#d4b56a;font-weight:700}
   .gl-table .mvppts{color:#9ec5ff;font-weight:700}
   .gl-empty{padding:2rem 1.1rem;text-align:center;color:#9aabc4;font-size:.9rem}
-  .pname .plink{cursor:pointer;border-radius:4px}
-  .pname .plink:hover{color:#9ec5ff;text-decoration:underline;text-underline-offset:2px}
-  .pname .avatar.plink{cursor:pointer}
-  .pname .avatar.plink:hover{outline:2px solid #1493ff66;outline-offset:1px}
+  .plink{cursor:pointer;border-radius:4px}
+  .plink:hover{color:#9ec5ff;text-decoration:underline;text-underline-offset:2px}
+  .avatar.plink:hover{outline:2px solid #1493ff66;outline-offset:1px;text-decoration:none}
 </style>
 </head>
 <body>
@@ -154,16 +183,16 @@
   </div>
 </div>
 <header>
-  <h1>Genius Sports NFL DFS — Falcons @ Packers</h1>
-  <p class="sub" style="margin-top:.45rem"><a href="/leaderboard" style="color:#d4b56a;font-weight:700;text-decoration:none">Live leaderboard →</a></p>
+  <h1>Genius Sports NFL DFS — Week 8 Sunday</h1>
+  <p class="sub" id="lb-link-wrap" style="margin-top:.45rem" hidden><a href="/leaderboard" style="color:#d4b56a;font-weight:700;text-decoration:none">Live leaderboard →</a></p>
 </header>
 <div class="rules">
-  <strong>Rules:</strong> Full PPR Sleeper scoring · $60,000 salary cap · MVP costs/scores 1.5× · One entry per person (edit anytime until lock) · Entries <strong>lock at 8:15pm ET Thursday</strong>
+  <strong>Rules:</strong> Full PPR Sleeper scoring · $60,000 salary cap · Roster: <strong>QB, 2 RB, 3 WR, TE, FLEX, DST</strong> · One entry per person · Entries lock at <strong>first kickoff (Sun 1:00pm ET)</strong> · <strong>Late swap:</strong> after lock, you can still swap players whose games haven’t started
 </div>
 
 <div class="lookup">
   <h2 style="margin:0 0 .35rem;font-size:1rem">Look up my lineup</h2>
-  <p style="margin:0 0 .75rem;color:#9aabc4;font-size:.85rem">Already submitted? Look it up anytime — you can edit until 8:15pm ET Thursday.</p>
+  <p style="margin:0 0 .75rem;color:#9aabc4;font-size:.85rem">Already submitted? Look it up anytime — edit freely before lock, or late-swap unstarted players after.</p>
   <div class="lookup-box">
     <div class="field">
       <label for="lookup-email">Email</label>
@@ -179,7 +208,10 @@
   <p id="confirm-sub" class="sub" style="margin:0 0 1rem"></p>
   <div id="confirm-body"></div>
   <p style="margin:1rem 0 0;font-size:.85rem;color:#9aabc4">You can look up this lineup anytime above with your email.</p>
-  <button type="button" id="build-another" style="margin-top:1rem;padding:.65rem 1rem;border:0;border-radius:8px;background:#2a3548;color:#fff;cursor:pointer">Back to builder</button>
+  <div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.5rem">
+    <button type="button" id="confirm-edit" style="padding:.65rem 1rem;border:0;border-radius:8px;background:#d4b56a;color:#111;font-weight:700;cursor:pointer">Edit lineup</button>
+    <button type="button" id="build-another" style="padding:.65rem 1rem;border:0;border-radius:8px;background:#2a3548;color:#fff;cursor:pointer">Back to builder</button>
+  </div>
 </div>
 
 <div class="wrap" id="build-wrap">
@@ -192,23 +224,24 @@
       <label for="email">Email (to look up / receive your lineup)</label>
       <input id="email" type="email" placeholder="you@email.com" autocomplete="email"/>
     </div>
-    <div class="modes">
-      <button type="button" id="mode-mvp" class="on">MVP — 1.5× Points</button>
-      <button type="button" id="mode-flex">AnyFLEX</button>
-    </div>
+    <div class="modes" id="slot-modes"></div>
     <div class="banner" id="banner">Click a lineup slot, then click a player to fill it.</div>
     <div class="filters">
       <input id="filter-search" type="search" placeholder="Search player…" autocomplete="off" spellcheck="false"/>
-      <select id="filter-team"><option value="">All teams</option><option value="ATL">ATL</option><option value="GB">GB</option></select>
-      <select id="filter-pos"><option value="">All positions</option></select>
+      <select id="filter-game"><option value="">All games</option></select>
+      <select id="filter-team"><option value="">All teams</option></select>
+      <select id="filter-pos" hidden><option value="">All positions</option></select>
       <select id="sort-by">
         <option value="salary:-1">Salary (high → low)</option>
         <option value="salary:1">Salary (low → high)</option>
         <option value="proj:-1">Proj (high → low)</option>
         <option value="proj:1">Proj (low → high)</option>
+        <option value="kickoff:1">Start time (early → late)</option>
+        <option value="kickoff:-1">Start time (late → early)</option>
         <option value="name:1">Name (A → Z)</option>
         <option value="name:-1">Name (Z → A)</option>
         <option value="team:1">Team</option>
+        <option value="opp:1">Opponent</option>
         <option value="pos:1">Position</option>
       </select>
     </div>
@@ -216,6 +249,8 @@
       <thead><tr>
         <th class="sortable" data-sort="name">Player</th>
         <th class="sortable" data-sort="team">Team</th>
+        <th class="sortable" data-sort="opp">Opp</th>
+        <th class="sortable" data-sort="kickoff">Start</th>
         <th class="sortable" data-sort="pos">Pos</th>
         <th class="sortable" data-sort="proj">Proj</th>
         <th class="sortable active" data-sort="salary">Salary ▾</th>
@@ -231,7 +266,7 @@
     <div class="side-sal">
       <div class="lbl">Salary remaining</div>
       <div class="big ok" id="remain">$60,000</div>
-      <div class="used" id="used">$0 used · avg $10,000 / player</div>
+      <div class="used" id="used">$0 used · avg $6,667 / player</div>
     </div>
     <div id="lineup-slots"></div>
     <div class="side-foot">
@@ -242,7 +277,7 @@
 
 <section class="scoring">
   <h2>Scoring</h2>
-  <p class="lede">Scoring will be based on <strong style="color:#eef2f8">default Sleeper PPR</strong>. MVP scores <strong style="color:#eef2f8">1.5x</strong> these points.</p>
+  <p class="lede">Scoring is based on <strong style="color:#eef2f8">default Sleeper PPR</strong>.</p>
   <div class="scoring-grid">
     <div class="card">
       <h3>Passing</h3>
@@ -271,28 +306,14 @@
       </table>
     </div>
     <div class="card">
-      <h3>Kicking</h3>
+      <h3>Defense / ST</h3>
       <table>
-        <tr><td>FG made (0-39 yards)</td><td class="pts">3</td></tr>
-        <tr><td>FG made (40-49 yards)</td><td class="pts">4</td></tr>
-        <tr><td>FG made (50+ yards)</td><td class="pts">5</td></tr>
-        <tr><td>Extra point made</td><td class="pts">1</td></tr>
-        <tr><td>Field goal missed</td><td class="pts">-1</td></tr>
-        <tr><td>Extra point missed</td><td class="pts">-1</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <h3>Defense / special teams</h3>
-      <table>
-        <tr><td>Defensive touchdown</td><td class="pts">6</td></tr>
         <tr><td>Sack</td><td class="pts">1</td></tr>
         <tr><td>Interception</td><td class="pts">2</td></tr>
         <tr><td>Fumble recovery</td><td class="pts">2</td></tr>
-        <tr><td>Forced fumble</td><td class="pts">1</td></tr>
+        <tr><td>Defensive / ST touchdown</td><td class="pts">6</td></tr>
         <tr><td>Safety</td><td class="pts">2</td></tr>
         <tr><td>Blocked kick</td><td class="pts">2</td></tr>
-        <tr><td>Special-teams touchdown</td><td class="pts">6</td></tr>
-        <tr><td>ST forced fumble</td><td class="pts">1</td></tr>
         <tr><td>ST fumble recovery</td><td class="pts">1</td></tr>
       </table>
     </div>
@@ -320,716 +341,6 @@
   </div>
 </section>
 
-<script>
-let players=[], mvp=null, flex=[null,null,null,null,null], CAP=60000, FLEX_N=5;
-let activeSlot='mvp'; // 'mvp' or 0..4
-let sortKey='salary', sortDir=-1, filterTeam='', filterPos='', filterSearch='';
-let locked=false, lockAt=null, editingExisting=false;
-const POS_ORDER = {QB:1,RB:2,WR:3,TE:4,K:5,DST:6};
-const $ = s => document.querySelector(s);
-const money = n => '$' + Math.round(n).toLocaleString();
-const byId = id => players.find(p => p.id === id);
-const displayName = p => (p.pos === 'DST' && !/DST$/i.test(p.name)) ? `${p.name} DST` : p.name;
-const avatar = (p, cls='') => `<img class="avatar ${cls}" src="${p.img || ''}" alt="" loading="lazy" onerror="this.src='https://sleepercdn.com/images/v2/icons/player_default.webp'"/>`;
-const avatarLink = (p, cls='') => `<img class="avatar ${cls} plink" data-gl="${p.id}" src="${p.img || ''}" alt="" loading="lazy" title="View game log" onerror="this.src='https://sleepercdn.com/images/v2/icons/player_default.webp'"/>`;
-const isMvpMode = () => activeSlot === 'mvp';
-
-// Plain-English hover text for FanDuel / Sleeper injury tags
-const INJ_MEANING = {
-  P: 'Probable — expected to play (minor issue)',
-  Q: 'Questionable — may or may not play (often a game-time decision)',
-  D: 'Doubtful — unlikely to play',
-  O: 'Out — will not play this game',
-  IR: 'Injured reserve — out for an extended period (usually several weeks+)',
-  PUP: 'Physically Unable to Perform — not currently available',
-  SUS: 'Suspended — not eligible to play',
-  S: 'Suspended — not eligible to play',
-  COVID: 'COVID-19 list — not currently available',
-  C: 'COVID-19 list — not currently available',
-  NA: 'Status not available',
-  NFI: 'Non-football injury — not currently available',
-  DNR: 'Did not report — not with the team',
-};
-function injTipText(p) {
-  const code = String(p.inj).trim().toUpperCase();
-  const meaning = INJ_MEANING[code] || `${code} — injury designation`;
-  const detail = (p.inj_detail || '').trim();
-  if (!detail) return meaning;
-  // Body-part / notes only — never strip a single letter off words like Out / Questionable
-  let body = detail
-    .replace(/^(probable|questionable|doubtful|out|injured reserve|ir|pup|suspended|covid(?:-19)?|non-football injury|nfi)\b\s*[—\-:]?\s*/i, '')
-    .replace(new RegExp('^' + code + '\\b\\s*[—\\-:]?\\s*', 'i'), '')
-    .trim();
-  if (!body || body.toUpperCase() === code) return meaning;
-  return `${meaning} (${body})`;
-}
-function injBadge(p) {
-  if (!p.inj) return '';
-  return ` <span class="inj" tabindex="0" data-tip="${injTipText(p).replace(/"/g, '&quot;')}">${p.inj}</span>`;
-}
-let injTipEl = null;
-function ensureInjTip() {
-  if (!injTipEl) {
-    injTipEl = document.createElement('div');
-    injTipEl.className = 'inj-tip';
-    injTipEl.setAttribute('role', 'tooltip');
-    document.body.appendChild(injTipEl);
-  }
-  return injTipEl;
-}
-function showInjTip(el) {
-  const tip = ensureInjTip();
-  tip.textContent = el.dataset.tip || '';
-  tip.classList.add('show');
-  const r = el.getBoundingClientRect();
-  // measure after show so size is known
-  const tw = tip.offsetWidth, th = tip.offsetHeight;
-  let left = r.left + r.width / 2 - tw / 2;
-  left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
-  let top = r.top - th - 10;
-  if (top < 8) top = r.bottom + 10;
-  tip.style.left = `${left}px`;
-  tip.style.top = `${top}px`;
-}
-function hideInjTip() {
-  if (injTipEl) injTipEl.classList.remove('show');
-}
-function bindInjTips() {
-  document.querySelectorAll('#pool .inj').forEach(el => {
-    el.onmouseenter = e => { e.stopPropagation(); showInjTip(el); };
-    el.onmouseleave = () => hideInjTip();
-    el.onfocus = () => showInjTip(el);
-    el.onblur = () => hideInjTip();
-  });
-}
-
-function cellVal(v) {
-  if (v == null || v === '') return 0;
-  return v;
-}
-
-// Green = good, red = bad (Sleeper-style). Level 5 elite … 1 poor.
-// Normal cuts: [elite, good, avg, poor] — value >= tier. Inverse: lower is better.
-const HEAT_PPR = {
-  QB:  [28, 22, 16, 10],
-  RB:  [25, 18, 12, 7],
-  WR:  [22, 15, 10, 6],
-  TE:  [18, 12, 8, 4],
-  K:   [14, 10, 7, 4],
-  DST: [14, 9, 5, 2],
-};
-const HEAT_STAT = {
-  CMP: [28, 22, 18, 12],
-  ATT: [40, 32, 25, 18],
-  PYD: [320, 260, 200, 140],
-  PTD: [4, 3, 2, 1],
-  CAR: [22, 16, 10, 5],
-  RYD: [100, 70, 40, 20],
-  RTD: [2, 1],
-  REC: [9, 6, 4, 2],
-  YDS: [120, 80, 50, 25],
-  TD:  [2, 1],
-  TAR: [12, 8, 5, 3],
-  FGM: [4, 3, 2, 1],
-  FGA: [4, 3, 2, 1],
-  XPM: [4, 3, 2, 1],
-  XPA: [4, 3, 2, 1],
-  SACK:[5, 3, 2, 1],
-  FR:  [2, 1],
-  FF:  [2, 1],
-  INT: { inv: true, cuts: [0, 1, 2] },
-  FUM: { inv: true, cuts: [0, 1, 2] },
-  PA:  { inv: true, cuts: [10, 17, 24, 31] },
-};
-
-function heatLevel(col, value, pos) {
-  if (value == null || value === '' || Number.isNaN(Number(value))) return null;
-  const n = Number(value);
-  let spec = (col === 'PPR' || col === 'MVP') ? HEAT_PPR[pos] : HEAT_STAT[col];
-  if (!spec) return null;
-
-  if (spec.inv) {
-    const cuts = spec.cuts;
-    // 0 ints/fumbles = best green; climbing toward red
-    if (n <= cuts[0]) return 5;
-    if (cuts.length > 1 && n <= cuts[1]) return 3;
-    if (cuts.length > 2 && n <= cuts[2]) return 2;
-    return 1;
-  }
-
-  const cuts = spec;
-  if (n >= cuts[0]) return 5;
-  if (cuts.length > 1 && n >= cuts[1]) return 4;
-  if (cuts.length > 2 && n >= cuts[2]) return 3;
-  if (cuts.length > 3 && n >= cuts[3]) return 2;
-  // 1 TD with only [2,1] thresholds: handled by cuts[1]
-  // 0 for counting stats that include 0 as poor floor
-  if (cuts.length === 2) return n > 0 ? 3 : 1;
-  return 1;
-}
-function heatCell(col, value, pos) {
-  const display = cellVal(value);
-  const lvl = heatLevel(col, value, pos);
-  const cls = ['heat', lvl ? `h${lvl}` : '', col === 'PPR' ? 'pts' : '', col === 'MVP' ? 'mvppts' : '']
-    .filter(Boolean).join(' ');
-  return `<td class="${cls}">${display}</td>`;
-}
-
-function closeGameLog() {
-  const bd = $('#gl-backdrop');
-  bd.classList.remove('show');
-  bd.setAttribute('aria-hidden', 'true');
-}
-async function openGameLog(playerId) {
-  const p = byId(playerId);
-  if (!p) return;
-  hideInjTip();
-  const bd = $('#gl-backdrop');
-  const mvpMode = isMvpMode();
-  const pos = p.pos;
-  $('#gl-avatar').src = p.img || 'https://sleepercdn.com/images/v2/icons/player_default.webp';
-  $('#gl-title').textContent = displayName(p);
-  $('#gl-meta').textContent = `${p.team} · ${p.pos}`;
-  $('#gl-note').textContent = 'Sleeper full-PPR game log';
-  $('#gl-body').innerHTML = '<div class="gl-empty">Loading…</div>';
-  bd.classList.add('show');
-  bd.setAttribute('aria-hidden', 'false');
-  try {
-    const r = await fetch('/api/gamelog?id=' + encodeURIComponent(playerId));
-    const d = await r.json();
-    if (!r.ok || !d.ok) throw new Error(d.error || 'Failed to load');
-    const cols = d.columns || [];
-    if (!(d.rows || []).length) {
-      $('#gl-body').innerHTML = '<div class="gl-empty">No games played yet this season.</div>';
-      return;
-    }
-    const head = `<tr>
-      <th>WK</th><th>OPP</th>
-      ${cols.map(c => `<th>${c}</th>`).join('')}
-      <th>PPR</th>
-      ${mvpMode ? '<th>MVP</th>' : ''}
-    </tr>`;
-    const body = d.rows.map(row => {
-      if (row.bye) {
-        const span = 2 + cols.length + 1 + (mvpMode ? 1 : 0);
-        return `<tr class="bye"><td>${row.week}</td><td colspan="${span - 1}">BYE</td></tr>`;
-      }
-      const mvpPts = row.pts == null ? null : Math.round(Number(row.pts) * 1.5 * 10) / 10;
-      const oppCell = row.dnp
-        ? `${row.opp || '—'} <span class="dnp-tag">DNP</span>`
-        : (row.opp || '—');
-      // DNP zeros shouldn't scream red — keep muted, no heat
-      if (row.dnp) {
-        return `<tr class="dnp">
-          <td>${row.week}</td>
-          <td>${oppCell}</td>
-          ${cols.map(c => `<td>${cellVal(row.cells && row.cells[c])}</td>`).join('')}
-          <td class="pts">${cellVal(row.pts)}</td>
-          ${mvpMode ? `<td class="mvppts">${cellVal(mvpPts)}</td>` : ''}
-        </tr>`;
-      }
-      return `<tr>
-        <td>${row.week}</td>
-        <td>${oppCell}</td>
-        ${cols.map(c => heatCell(c, row.cells && row.cells[c], pos)).join('')}
-        ${heatCell('PPR', row.pts, pos)}
-        ${mvpMode ? heatCell('MVP', mvpPts, pos) : ''}
-      </tr>`;
-    }).join('');
-    $('#gl-body').innerHTML = `<table class="gl-table"><thead>${head}</thead><tbody>${body}</tbody></table>`;
-  } catch (err) {
-    $('#gl-body').innerHTML = `<div class="gl-empty">${err.message || 'Could not load game log'}</div>`;
-  }
-}
-function bindGameLogLinks() {
-  document.querySelectorAll('#pool [data-gl]').forEach(el => {
-    el.onclick = e => {
-      e.stopPropagation();
-      openGameLog(el.dataset.gl);
-    };
-  });
-}
-
-function visiblePlayers() {
-  const q = filterSearch.trim().toLowerCase();
-  let list = players.filter(p =>
-    (!filterTeam || p.team === filterTeam) &&
-    (!filterPos || p.pos === filterPos) &&
-    (!q || displayName(p).toLowerCase().includes(q) || p.team.toLowerCase().includes(q) || p.pos.toLowerCase().includes(q))
-  );
-  list = [...list].sort((a, b) => {
-    let av, bv;
-    if (sortKey === 'salary') {
-      av = isMvpMode() ? a.mvp_salary : a.salary;
-      bv = isMvpMode() ? b.mvp_salary : b.salary;
-    } else if (sortKey === 'proj') {
-      const ap = a.proj == null ? -1 : Number(a.proj);
-      const bp = b.proj == null ? -1 : Number(b.proj);
-      av = isMvpMode() ? ap * 1.5 : ap;
-      bv = isMvpMode() ? bp * 1.5 : bp;
-    } else if (sortKey === 'pos') {
-      av = POS_ORDER[a.pos] || 99; bv = POS_ORDER[b.pos] || 99;
-      if (av === bv) { av = a.name; bv = b.name; return av < bv ? -sortDir : av > bv ? sortDir : 0; }
-    } else if (sortKey === 'team') {
-      av = a.team; bv = b.team;
-      if (av === bv) { av = a.salary; bv = b.salary; return (bv - av) * (sortDir < 0 ? 1 : -1); }
-    } else {
-      av = a.name.toLowerCase(); bv = b.name.toLowerCase();
-    }
-    if (av < bv) return -sortDir;
-    if (av > bv) return sortDir;
-    return 0;
-  });
-  return list;
-}
-
-function updateSortHeaders() {
-  document.querySelectorAll('th.sortable').forEach(th => {
-    const key = th.dataset.sort;
-    const on = key === sortKey;
-    th.classList.toggle('active', on);
-    const label = {name:'Player', team:'Team', pos:'Pos', proj:'Proj', salary:'Salary'}[key];
-    th.textContent = on ? `${label} ${sortDir < 0 ? '▾' : '▴'}` : label;
-  });
-}
-
-function formatProj(p) {
-  if (p.proj == null || p.proj === '') return '—';
-  const base = Number(p.proj);
-  if (!Number.isFinite(base)) return '—';
-  const pts = isMvpMode() ? base * 1.5 : base;
-  return pts.toFixed(1);
-}
-
-function slotProjPts(p, asMvp) {
-  if (!p || p.proj == null || p.proj === '') return null;
-  const base = Number(p.proj);
-  if (!Number.isFinite(base)) return null;
-  return asMvp ? base * 1.5 : base;
-}
-
-function formatProjPts(n) {
-  if (n == null || !Number.isFinite(n)) return '—';
-  return n.toFixed(1);
-}
-
-function lineupProjTotal() {
-  let total = 0;
-  let any = false;
-  if (mvp) {
-    const n = slotProjPts(byId(mvp), true);
-    if (n != null) { total += n; any = true; }
-  }
-  flex.forEach(id => {
-    if (!id) return;
-    const n = slotProjPts(byId(id), false);
-    if (n != null) { total += n; any = true; }
-  });
-  return any ? total : null;
-}
-
-function entryPlayerProj(p) {
-  // Prefer live pool (fresh Sleeper poll); fall back to enriched API value
-  const pl = detailPlayer(p);
-  if (pl && pl.proj != null && pl.proj !== '') {
-    const base = Number(pl.proj);
-    if (Number.isFinite(base)) return p.slot === 'MVP' ? base * 1.5 : base;
-  }
-  if (p.proj != null && p.proj !== '') {
-    const n = Number(p.proj);
-    if (Number.isFinite(n)) return n;
-  }
-  return null;
-}
-
-function salaryUsed() {
-  let s = 0;
-  if (mvp) s += byId(mvp).mvp_salary;
-  flex.forEach(id => { if (id) s += byId(id).salary; });
-  return s;
-}
-
-function firstEmptyFlex() {
-  return flex.findIndex(x => !x);
-}
-
-function updateSlotChrome() {
-  const mvpMode = activeSlot === 'mvp';
-  $('#mode-mvp').classList.toggle('on', mvpMode);
-  $('#mode-flex').classList.toggle('on', !mvpMode);
-  $('#banner').textContent = mvpMode
-    ? 'MVP slot selected — click a player to set MVP (1.5× salary & points).'
-    : `AnyFLEX slot ${activeSlot + 1} selected — click a player to fill it.`;
-}
-
-function focusNeededSlot() {
-  const flexEmpty = firstEmptyFlex();
-  const lineupComplete = !!mvp && flexEmpty < 0;
-
-  if (lineupComplete) {
-    updateSlotChrome();
-    return; // stay on current tab
-  }
-  if (!mvp && flexEmpty < 0) {
-    activeSlot = 'mvp'; // all flexes full, MVP empty
-  } else if (mvp && flexEmpty >= 0) {
-    activeSlot = flexEmpty; // MVP done, flexes remain
-  } else if (activeSlot !== 'mvp' && flexEmpty >= 0) {
-    activeSlot = flexEmpty; // still building flexes
-  }
-  // if MVP empty and flexes empty/partial and on MVP tab, stay on MVP
-  updateSlotChrome();
-}
-
-function selectSlot(slot) {
-  activeSlot = slot;
-  updateSlotChrome();
-  sync();
-}
-
-function clearFromLineup(id) {
-  if (mvp === id) mvp = null;
-  flex = flex.map(x => x === id ? null : x);
-}
-
-function removePlayer(id) {
-  if (!id) return;
-  clearFromLineup(id);
-  focusNeededSlot();
-  sync();
-}
-
-function addPlayer(id) {
-  if (!id) return;
-  clearFromLineup(id);
-  if (activeSlot === 'mvp') {
-    mvp = id;
-  } else {
-    const i = firstEmptyFlex();
-    if (i < 0) return;
-    flex[i] = id;
-  }
-  focusNeededSlot();
-  sync();
-}
-
-function sync() {
-  const used = salaryUsed();
-  const rem = CAP - used;
-  const ids = [mvp, ...flex].filter(Boolean);
-  const name = $('#name').value.trim();
-  const email = $('#email').value.trim();
-  const full = mvp && flex.every(Boolean);
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  $('#remain').textContent = money(rem);
-  $('#remain').className = 'big ' + (rem < 0 ? 'bad' : 'ok');
-  const avg = Math.round(CAP / (1 + FLEX_N));
-  const projTot = lineupProjTotal();
-  $('#used').textContent = projTot != null
-    ? `${money(used)} used · avg ${money(avg)} / player · proj ${formatProjPts(projTot)}`
-    : `${money(used)} used · avg ${money(avg)} / player`;
-
-  const slots = [];
-  const mvpActive = activeSlot === 'mvp' ? ' active' : '';
-  if (!mvp) {
-    slots.push(`<div class="slot${mvpActive}" data-slot="mvp"><div class="lbl">MVP — 1.5×</div><div class="empty">Select MVP</div></div>`);
-  } else {
-    const p = byId(mvp);
-    slots.push(`<div class="slot filled${mvpActive}" data-slot="mvp"><div class="lbl">MVP — 1.5×</div><div class="who">
-      <span class="pname">${avatar(p,'sm')}<span><span class="team ${p.team}">${p.team}</span>${displayName(p)}</span></span>
-      <span style="display:flex;align-items:center;gap:.45rem">
-        <span class="pright"><span class="pproj">${formatProjPts(slotProjPts(p, true))}</span><span class="psal">${money(p.mvp_salary)}</span></span>
-        <button class="pm sub" data-rm="${mvp}" type="button">−</button>
-      </span></div></div>`);
-  }
-  flex.forEach((id, i) => {
-    const act = activeSlot === i ? ' active' : '';
-    if (!id) {
-      slots.push(`<div class="slot${act}" data-slot="${i}"><div class="lbl">AnyFLEX</div><div class="empty">Select AnyFLEX</div></div>`);
-      return;
-    }
-    const p = byId(id);
-    slots.push(`<div class="slot filled${act}" data-slot="${i}"><div class="lbl">AnyFLEX</div><div class="who">
-      <span class="pname">${avatar(p,'sm')}<span><span class="team ${p.team}">${p.team}</span>${displayName(p)}</span></span>
-      <span style="display:flex;align-items:center;gap:.45rem">
-        <span class="pright"><span class="pproj">${formatProjPts(slotProjPts(p, false))}</span><span class="psal">${money(p.salary)}</span></span>
-        <button class="pm sub" data-rm="${id}" type="button">−</button>
-      </span></div></div>`);
-  });
-  $('#lineup-slots').innerHTML = slots.join('');
-  document.querySelectorAll('[data-slot]').forEach(el => {
-    el.onclick = () => {
-      const s = el.dataset.slot;
-      selectSlot(s === 'mvp' ? 'mvp' : Number(s));
-    };
-  });
-  document.querySelectorAll('#lineup-slots [data-rm]').forEach(el => {
-    el.onclick = e => { e.stopPropagation(); removePlayer(el.dataset.rm); };
-  });
-
-  const ok = !locked && name && emailOk && full && rem >= 0;
-  $('#go').disabled = !ok;
-  let why = '';
-  if (locked) why = 'Entries locked — kickoff was 8:15pm ET Thursday';
-  else if (!ok) {
-    if (!name) why = 'Enter your name';
-    else if (!emailOk) why = 'Enter a valid email';
-    else if (!mvp) why = 'Select an MVP';
-    else if (!flex.every(Boolean)) why = `Need ${flex.filter(x => !x).length} more AnyFLEX player${flex.filter(x => !x).length === 1 ? '' : 's'}`;
-    else if (rem < 0) why = `Over salary cap by ${money(-rem)}`;
-  }
-  let whyEl = $('#why');
-  if (!whyEl) {
-    whyEl = document.createElement('div');
-    whyEl.id = 'why';
-    whyEl.style.cssText = 'color:#ff6b6b;font-size:.85rem;margin-top:.55rem;min-height:1.2em';
-    $('#go').after(whyEl);
-  }
-  whyEl.textContent = why;
-  renderPool();
-}
-
-function renderPool() {
-  updateSortHeaders();
-  const mvpMode = isMvpMode();
-  $('#pool').innerHTML = visiblePlayers().map(p => {
-    const isMvp = mvp === p.id;
-    const isFlex = flex.includes(p.id);
-    const inActive = mvpMode ? isMvp : isFlex;
-    const locked = mvpMode ? isFlex : isMvp;
-    const showSal = mvpMode ? p.mvp_salary : p.salary;
-    let btn = '';
-    let note = '';
-    if (locked) {
-      note = mvpMode ? 'already selected as FLEX' : 'already selected as MVP';
-      btn = `<button class="pm sub" type="button" data-rm-other="${p.id}" title="Remove from lineup">−</button>`;
-    } else if (inActive) {
-      btn = `<button class="pm sub" type="button" data-toggle="${p.id}">−</button>`;
-    } else {
-      btn = `<button class="pm add" type="button" data-toggle="${p.id}">+</button>`;
-    }
-    const cls = locked ? 'locked' : (inActive ? 'on' : '');
-    return `<tr class="${cls}" data-id="${p.id}" data-locked="${locked ? '1' : '0'}">
-      <td><div class="pname">${avatarLink(p)}<span class="meta"><span class="nm"><span class="plink" data-gl="${p.id}" title="View game log">${displayName(p)}</span>${injBadge(p)}</span>${note ? `<span class="note">${note}</span>` : ''}</span></div></td>
-      <td><span class="team ${p.team}">${p.team}</span></td>
-      <td>${p.pos}</td>
-      <td class="proj" title="Sleeper full PPR projection${mvpMode ? ' × 1.5 for MVP' : ''}">${formatProj(p)}</td>
-      <td class="sal">${money(showSal)}</td>
-      <td class="act">${btn}</td>
-    </tr>`;
-  }).join('');
-  document.querySelectorAll('#pool .pm.sub').forEach(b => {
-    b.onclick = e => {
-      e.stopPropagation();
-      removePlayer(b.dataset.toggle || b.dataset.rmOther);
-    };
-  });
-  document.querySelectorAll('#pool .pm.add').forEach(b => {
-    b.onclick = e => {
-      e.stopPropagation();
-      addPlayer(b.dataset.toggle);
-    };
-  });
-  document.querySelectorAll('#pool tr').forEach(tr => {
-    tr.onclick = () => {
-      if (tr.dataset.locked === '1') return;
-      const id = tr.dataset.id;
-      const selectedHere = mvpMode ? (mvp === id) : flex.includes(id);
-      if (selectedHere) removePlayer(id);
-      else addPlayer(id);
-    };
-  });
-  bindInjTips();
-  bindGameLogLinks();
-}
-
-$('#mode-mvp').onclick = () => selectSlot('mvp');
-$('#mode-flex').onclick = () => {
-  const empty = flex.findIndex(x => !x);
-  selectSlot(empty >= 0 ? empty : 0);
-};
-$('#name').oninput = sync;
-$('#email').oninput = sync;
-$('#filter-team').onchange = e => { filterTeam = e.target.value; renderPool(); };
-$('#filter-pos').onchange = e => { filterPos = e.target.value; renderPool(); };
-$('#filter-search').oninput = e => { filterSearch = e.target.value; renderPool(); };
-$('#sort-by').onchange = e => {
-  const [key, dir] = e.target.value.split(':');
-  sortKey = key; sortDir = Number(dir);
-  renderPool();
-};
-document.querySelectorAll('th.sortable').forEach(th => {
-  th.onclick = () => {
-    const key = th.dataset.sort;
-    if (sortKey === key) sortDir *= -1;
-    else { sortKey = key; sortDir = key === 'salary' ? -1 : 1; }
-    const sel = $('#sort-by');
-    const want = `${sortKey}:${sortDir}`;
-    if ([...sel.options].some(o => o.value === want)) sel.value = want;
-    renderPool();
-  };
-});
-function detailPlayer(p) {
-  // Prefer API img; fall back to loaded pool so photos still show
-  return byId(p.id) || p;
-}
-function showEntry(entry, emailed, updated) {
-  $('#build-wrap').classList.add('hidden');
-  const c = $('#confirm');
-  c.classList.add('show');
-  editingExisting = false;
-  $('#go').textContent = 'Submit lineup';
-  if (updated) {
-    $('#confirm-sub').textContent = emailed
-      ? `Thanks, ${entry.name} — your lineup was updated. We also emailed ${entry.email}.`
-      : `Thanks, ${entry.name} — your lineup was updated. You can edit again anytime before 8:15pm ET Monday.`;
-  } else {
-    $('#confirm-sub').textContent = emailed
-      ? `Thanks, ${entry.name} — you're in! We also emailed ${entry.email}.`
-      : `Thanks, ${entry.name} — you're in! Edit anytime before 8:15pm ET Monday with the same email.`;
-  }
-  const rows = (entry.players_detail || []).map(p => {
-    const pl = detailPlayer(p);
-    const pj = entryPlayerProj(p);
-    return `<div class="row">
-      <div class="who">
-        <span class="slotlbl">${p.slot}</span>
-        ${avatar(pl)}
-        <span><span class="team ${pl.team || ''}">${pl.team || ''}</span> <span class="nm">${p.name}</span></span>
-      </div>
-      <span class="rightmeta"><span class="pproj">${formatProjPts(pj)}</span><span class="sal">${money(p.salary)}</span></span>
-    </div>`;
-  }).join('');
-  const projSum = (entry.players_detail || []).reduce((s, p) => {
-    const n = entryPlayerProj(p);
-    return n == null ? s : s + n;
-  }, 0);
-  const hasProj = (entry.players_detail || []).some(p => entryPlayerProj(p) != null);
-  $('#confirm-body').innerHTML = rows
-    + `<div class="row"><strong>Total salary</strong><span class="sal">${money(entry.salary)} / $60,000</span></div>`
-    + (hasProj ? `<div class="row"><strong>Projected pts</strong><span class="pproj">${formatProjPts(projSum)}</span></div>` : '');
-}
-
-$('#build-another').onclick = () => {
-  $('#confirm').classList.remove('show');
-  $('#build-wrap').classList.remove('hidden');
-  editingExisting = false;
-  $('#go').textContent = 'Submit lineup';
-};
-
-function loadEntryIntoBuilder(entry) {
-  $('#confirm').classList.remove('show');
-  $('#build-wrap').classList.remove('hidden');
-  $('#name').value = entry.name || '';
-  $('#email').value = entry.email || '';
-  mvp = entry.mvp || null;
-  flex = [...(entry.flex || [])];
-  while (flex.length < FLEX_N) flex.push(null);
-  flex = flex.slice(0, FLEX_N);
-  editingExisting = true;
-  $('#go').textContent = 'Update lineup';
-  $('#lookup-result').innerHTML = '';
-  selectSlot('mvp');
-  $('#msg').textContent = locked ? 'Entries are locked — viewing only.' : 'Lineup loaded — edit and hit Update lineup.';
-  $('#msg').className = locked ? 'bad' : 'ok';
-}
-
-$('#go').onclick = async () => {
-  const body = { name: $('#name').value.trim(), email: $('#email').value.trim(), mvp, flex };
-  const r = await fetch('/api/lineup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  const j = await r.json();
-  if (!r.ok) { $('#msg').textContent = j.error || 'Error'; $('#msg').className = 'bad'; return; }
-  $('#msg').textContent = '';
-  showEntry(j.entry, j.emailed, j.updated);
-};
-
-$('#gl-close').onclick = closeGameLog;
-$('#gl-backdrop').onclick = e => { if (e.target === $('#gl-backdrop')) closeGameLog(); };
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && $('#gl-backdrop').classList.contains('show')) closeGameLog();
-});
-
-$('#lookup-btn').onclick = async () => {
-  const email = $('#lookup-email').value.trim();
-  const box = $('#lookup-result');
-  if (!email) { box.innerHTML = '<span class="bad">Enter your email</span>'; return; }
-  const r = await fetch('/api/lookup?email=' + encodeURIComponent(email));
-  const j = await r.json();
-  if (!r.ok) { box.innerHTML = `<span class="bad">${j.error || 'Not found'}</span>`; return; }
-  const e = j.entry;
-  const editBtn = locked
-    ? ''
-    : `<button type="button" id="lookup-edit" style="margin-top:1rem;margin-right:.5rem;padding:.65rem 1rem;border:0;border-radius:8px;background:#d4b56a;color:#111;font-weight:700;cursor:pointer">Edit lineup</button>`;
-  const lookupRows = (e.players_detail || []).map(p => {
-    const pl = detailPlayer(p);
-    const pj = entryPlayerProj(p);
-    return `<div class="row">
-        <div class="who">
-          <span class="slotlbl">${p.slot}</span>
-          ${avatar(pl)}
-          <span><span class="team ${pl.team || ''}">${pl.team || ''}</span> <span class="nm">${p.name}</span></span>
-        </div>
-        <span class="rightmeta"><span class="pproj">${formatProjPts(pj)}</span><span class="sal">${money(p.salary)}</span></span>
-      </div>`;
-  }).join('');
-  const lookupProjSum = (e.players_detail || []).reduce((s, p) => {
-    const n = entryPlayerProj(p);
-    return n == null ? s : s + n;
-  }, 0);
-  const lookupHasProj = (e.players_detail || []).some(p => entryPlayerProj(p) != null);
-  box.innerHTML = `<div class="confirm show" style="margin:0">
-    <h2 style="font-size:1.05rem">${e.name}'s lineup</h2>
-    ${lookupRows}
-    <div class="row"><strong>Total salary</strong><span class="sal">${money(e.salary)} / $60,000</span></div>
-    ${lookupHasProj ? `<div class="row"><strong>Projected pts</strong><span class="pproj">${formatProjPts(lookupProjSum)}</span></div>` : ''}
-    ${editBtn}
-    <button type="button" id="lookup-back" style="margin-top:1rem;padding:.65rem 1rem;border:0;border-radius:8px;background:#2a3548;color:#fff;cursor:pointer">← Back</button>
-  </div>`;
-  const editEl = $('#lookup-edit');
-  if (editEl) editEl.onclick = () => loadEntryIntoBuilder(e);
-  $('#lookup-back').onclick = () => {
-    box.innerHTML = '';
-    $('#lookup-email').value = '';
-    $('#confirm').classList.remove('show');
-    $('#build-wrap').classList.remove('hidden');
-  };
-};
-
-fetch('/api/state').then(r => r.json()).then(d => {
-  players = d.players; CAP = d.cap; FLEX_N = d.flex_n;
-  locked = !!d.locked;
-  lockAt = d.lock_at ? new Date(d.lock_at) : null;
-  flex = Array(FLEX_N).fill(null);
-  const posSel = $('#filter-pos');
-  [...new Set(players.map(p => p.pos))]
-    .sort((a, b) => (POS_ORDER[a] || 99) - (POS_ORDER[b] || 99))
-    .forEach(pos => {
-      const o = document.createElement('option');
-      o.value = pos; o.textContent = pos;
-      posSel.appendChild(o);
-    });
-  selectSlot('mvp');
-  // Re-check lock periodically so the button flips at kickoff without refresh
-  setInterval(() => {
-    if (!lockAt || locked) return;
-    if (Date.now() >= lockAt.getTime()) {
-      locked = true;
-      sync();
-    }
-  }, 15000);
-  // Pull fresh Sleeper injury badges without a full page reload
-  setInterval(async () => {
-    try {
-      const r = await fetch('/api/state');
-      const d = await r.json();
-      if (!d.players) return;
-      locked = !!d.locked;
-      players = d.players;
-      sync();
-    } catch (_) {}
-  }, 60000);
-});
-</script>
+<script src="/classic.js?v=13"></script>
 </body>
 </html>

@@ -5,5 +5,5 @@ dockerfilePath = "Dockerfile"
 [deploy]
 startCommand = "python3 server.py"
 healthcheckPath = "/"
-healthcheckTimeout = 30
+healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
