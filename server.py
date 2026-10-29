@@ -528,6 +528,24 @@ def format_inj(status, body_part=None, notes=None):
     return code, " — ".join(detail_parts)
 
 
+# FanDuel team abbrev → Sleeper CDN logo slug
+TEAM_LOGO_SLUG = {
+    "ARI": "ari", "ATL": "atl", "BAL": "bal", "BUF": "buf", "CAR": "car", "CHI": "chi",
+    "CIN": "cin", "CLE": "cle", "DAL": "dal", "DEN": "den", "DET": "det", "GB": "gb",
+    "HOU": "hou", "IND": "ind", "JAC": "jax", "JAX": "jax", "KC": "kc", "LAC": "lac",
+    "LAR": "lar", "LV": "lv", "MIA": "mia", "MIN": "min", "NE": "ne", "NO": "no",
+    "NYG": "nyg", "NYJ": "nyj", "PHI": "phi", "PIT": "pit", "SEA": "sea", "SF": "sf",
+    "TB": "tb", "TEN": "ten", "WAS": "was", "WSH": "was",
+}
+
+
+def team_logo_url(team):
+    slug = TEAM_LOGO_SLUG.get((team or "").strip().upper())
+    if not slug:
+        return None
+    return f"https://sleepercdn.com/images/team_logos/nfl/{slug}.png"
+
+
 def load_players():
     imgs = json.loads(IMGS.read_text()) if IMGS.exists() else {}
     out = []
@@ -548,6 +566,8 @@ def load_players():
                 sleeper_id = r["Team"].strip().upper()
                 if sleeper_id == "JAC":
                     sleeper_id = "JAX"
+                # Always prefer team logo for DST (covers missing JSON entries)
+                img = team_logo_url(r["Team"]) or img
             else:
                 sleeper_id = sleeper_id_from_img(img)
             ko_raw = (r.get("Kickoff") or "").strip()
